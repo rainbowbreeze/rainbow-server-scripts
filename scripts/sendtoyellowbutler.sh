@@ -7,13 +7,6 @@
 #  Store configurations for yellow butler call, like the API key and the address of the server
 #
 #
-variables_reset() {
-	# internal variables
-	logfile=
-	api_key=
-	server_address=
-}
-
 variable_set() {
 	local variable="${1}"
 	local value="${2}"
@@ -48,6 +41,11 @@ check_for_required_vars () {
 		exit 2
 	fi
 
+	if [ -z "${host_name}" ]; then
+		echo "host_name not found. Please check config file at ${config_file}"
+		exit 2
+	fi
+
 	if [ -z "${message}" ]; then
 		echo "message not found. Please specify it as the first command line argument"
 		exit 2
@@ -74,10 +72,7 @@ else
   variable_set "message" "$1"
 fi
 
-echo "Message read:"
-echo ${message}
-echo "-----------"
-
 check_for_required_vars
 
+message="Message from host ${host_name}\n${message}"
 curl -X POST ${server_address}/yellowbot/api/v1.0/intent -H "X-Authorization:${api_key}" -H "Content-Type: application/json" -d "{\"intent\":\"notify_admin\", \"params\":{\"message\":\"${message}\"}}"
