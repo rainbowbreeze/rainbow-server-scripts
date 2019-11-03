@@ -18,5 +18,5 @@ if [ -n "${packages}" ]; then
   echo "${packages}"
   # forge the message and send it
   message="There are packages to upgrade\n${pagkages}"
-  rainbow-notifyadmin.sh \"${message}\"
+  rainbow-notifyadmin.sh "${message}"
 fi
