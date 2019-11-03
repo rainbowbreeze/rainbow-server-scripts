@@ -13,7 +13,7 @@ packages=$(aptitude search '~U' -F "%p")
 # aptitude versions '?Upgradable'
 
 # If there are packages to update
-if [ -z "${packages}" ]; then
+if [ -n "${packages}" ]; then
   # forge the message and send it
   message = "There are packages to upgrade\n${pagkages}"
   rainbow-notifyadmin.sh \"${message}\"
