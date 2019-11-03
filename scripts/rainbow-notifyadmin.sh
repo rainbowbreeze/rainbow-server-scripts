@@ -7,6 +7,8 @@
 #  Store configurations for yellow butler call, like the API key and the address of the server
 #
 #
+# Part of the RainbowScripts suite
+
 variable_set() {
 	local variable="${1}"
 	local value="${2}"
@@ -16,15 +18,26 @@ variable_set() {
 }
 
 variables_set_defaults() {
-	variable_set "config_file" "./yellowbutler.conf"
+	variable_set "config_file" "/etc/rainbowscripts.conf"
 }
 
 
 # Check for the presence of the config file
 check_for_config_file() {
-	if test -f ${config_file}; then
+	local config_found=0
+
+	if [ -f ${config_file} ]; then
   	. ${config_file}
-	else
+		config_found=1
+	fi
+
+	# Workaroud for local execution of the script
+	if [ -f conf/rainbowscripts.conf ]; then
+		. conf/rainbowscripts.conf
+		config_found=1
+	fi
+
+	if [ ${config_found} -eq 0 ]; then
 		echo "Config file not found. Default file is ${config_file}"
 		exit 1
 	fi
