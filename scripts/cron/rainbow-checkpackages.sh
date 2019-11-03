@@ -14,7 +14,9 @@ packages=$(aptitude search '~U' -F "%p")
 
 # If there are packages to update
 if [ -n "${packages}" ]; then
+  echo "Packages to update"
+  echo "${packages}"
   # forge the message and send it
-  message = "There are packages to upgrade\n${pagkages}"
+  message="There are packages to upgrade\n${pagkages}"
   rainbow-notifyadmin.sh \"${message}\"
 fi
