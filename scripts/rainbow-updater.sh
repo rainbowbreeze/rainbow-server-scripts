@@ -33,7 +33,7 @@ update_scripts() {
 
   # Copy configurations
   # TODO revert command
-  if [ ! -f $/etc/rainbowscripts.conf ]; then
+  if [ ! -f /etc/rainbowscripts.conf ]; then
     copy_file "scripts/conf/rainbowscripts.conf" "/etc/"
   fi
 
