@@ -9,7 +9,7 @@
 
 # Common vars
 # Current version of the scripts installed on this host
-current_version = "/var/log/rainbow-script-version.txt"
+# current_version="/var/log/rainbow-script-version.txt"
 
 update_scripts() {
   # Creates the temp directort
@@ -34,8 +34,10 @@ update_scripts() {
   # Copy configurations
   # TODO revert command
   if [ ! -f $/etc/rainbowscripts.conf ]; then
-    copy_file "conf/rainbowscripts.conf" "/etc/"
+    copy_file "scripts/conf/rainbowscripts.conf" "/etc/"
   fi
+
+  echo "RainbowScripts updateds to the latest version"
 
   # Copy current version
   # TODO
