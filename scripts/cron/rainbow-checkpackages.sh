@@ -17,6 +17,7 @@ output_message() {
 # Check what are the packages in the system to update
 check_packages() {
   tmp_file1=$(mktemp)
+  aptitude update
   aptitude search '~U' -F "%p" > ${tmp_file1} 2>&1
 
   # If there are packages to update
