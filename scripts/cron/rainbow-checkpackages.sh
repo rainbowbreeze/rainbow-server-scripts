@@ -6,17 +6,19 @@
 # Part of the RainbowScripts suite
 
 # aptitude search '~U' -F "%p"
-
-# Get the packages to update
-packages=$(aptitude search '~U' -F "%p")
-
 # aptitude versions '?Upgradable'
 
+tmpfile1=$(mktemp)
+aptitude search '~U' -F "%p" > ${tmpfile1} 2>&1
+
 # If there are packages to update
-if [ -n "${packages}" ]; then
-  echo "Packages to update"
-  echo "${packages}"
+if [ -s "${tmpfile1}" ]; then
+  tmpfile2=$(mktemp)
+  echo "Packages to update" > ${tmpfile2}
+  cat ${tmpfile1} >> ${tmpfile2}
   # forge the message and send it
-  message="There are packages to upgrade\n${pagkages}"
-  rainbow-notifyadmin.sh "${message}"
+  cat ${tmpfile2} | rainbow-notifyadmin.sh
+  rm -f ${tmpfile2}
 fi
+
+rm -f ${tmpfile1}
