@@ -5,20 +5,31 @@
 #
 # Part of the RainbowScripts suite
 
+
 # aptitude search '~U' -F "%p"
 # aptitude versions '?Upgradable'
 
-tmp_file1=$(mktemp)
-aptitude search '~U' -F "%p" > ${tmp_file1} 2>&1
+# Show a message
+output_message() {
+  echo "${1}"
+}
 
-# If there are packages to update
-if [ -s "${tmp_file1}" ]; then
-  tmp_file2=$(mktemp)
-  echo "Packages to update" > ${tmp_file2}
-  cat ${tmp_file1} >> ${tmp_file2}
-  # forge the message and send it
-  cat ${tmp_file2} | rainbow-notifyadmin.sh
-  rm -f ${tmp_file2}
-fi
+# Check what are the packages in the system to update
+check_packages() {
+  tmp_file1=$(mktemp)
+  aptitude search '~U' -F "%p" > ${tmp_file1} 2>&1
 
-rm -f ${tmp_file1}
+  # If there are packages to update
+  if [ -s "${tmp_file1}" ]; then
+    tmp_file2=$(mktemp)
+    output_message "Packages to update" > ${tmp_file2}
+    cat ${tmp_file1} >> ${tmp_file2}
+    # forge the message and send it
+    cat ${tmp_file2} | rainbow-notifyadmin.sh
+    rm -f ${tmp_file2}
+  fi
+
+  rm -f ${tmp_file1}
+}
+
+check_packages

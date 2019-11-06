@@ -9,6 +9,7 @@
 #
 # Part of the RainbowScripts suite
 
+# Set a variable if not already set
 variable_set() {
 	local variable="${1}"
 	local value="${2}"
@@ -17,10 +18,15 @@ variable_set() {
 	fi
 }
 
+# Set default vats
 variables_set_defaults() {
 	variable_set "config_file" "/etc/rainbowscripts.conf"
 }
 
+# Show a message
+output_message() {
+  echo "${1}"
+}
 
 # Check for the presence of the config file
 check_for_config_file() {
@@ -38,29 +44,29 @@ check_for_config_file() {
 	fi
 
 	if [ ${config_found} -eq 0 ]; then
-		echo "Config file not found. Default file is ${config_file}"
+		output_message "Config file not found. Default file is ${config_file}"
 		exit 1
 	fi
 }
 
 check_for_required_vars () {
 	if [ -z "${api_key}" ]; then
-		echo "api_key not found. Please check config file at ${config_file}"
+		output_message "api_key not found. Please check config file at ${config_file}"
 		exit 2
 	fi
 
 	if [ -z "${server_address}" ]; then
-		echo "server_address not found. Please check config file at ${config_file}"
+		output_message "server_address not found. Please check config file at ${config_file}"
 		exit 2
 	fi
 
 	if [ -z "${host_name}" ]; then
-		echo "host_name not found. Please check config file at ${config_file}"
+		output_message "host_name not found. Please check config file at ${config_file}"
 		exit 2
 	fi
 
 	if [ -z "${message}" ]; then
-		echo "message not found. Please specify it as the first command line argument"
+		output_message "message not found. Please specify it as the first command line argument"
 		exit 2
 	fi
 }
@@ -87,5 +93,5 @@ fi
 
 check_for_required_vars
 
-message="Message from ${host_name}:\n${message}"
-curl -X POST ${server_address}/yellowbot/api/v1.0/intent -H "X-Authorization:${api_key}" -H "Content-Type: application/json" -d "{\"intent\":\"notify_admin\", \"params\":{\"message\":\"${message}\"}}"
+message="${host_name}: ${message}"
+curl -X POST ${server_address} -H "X-Authorization:${api_key}" -H "Content-Type: application/json" -d "{\"intent\":\"notify_admin\", \"params\":{\"message\":\"${message}\"}}"
