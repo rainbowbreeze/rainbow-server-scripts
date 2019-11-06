@@ -34,7 +34,7 @@ update_scripts() {
   output_message "Downloading RainbowScripts..."
   cd ${tmp_dir}
   local script_dir="repo"
-  git clone -quite ${git_repo} ${script_dir} 2>&1
+  git clone -quite ${git_repo} ${script_dir} >/dev/null 2>&1
   
   # Check if the download failed
   # TODO more robust check, based on the output of git
@@ -65,7 +65,7 @@ update_scripts() {
   rm -rf ${tmp_dir}
 
   if [ -n "${new_config}" ]; then
-    output_message "Before running the scripts, please edit /etc/rainbowscripts.conf addinng your values"
+    output_message " --> Before running the scripts, please edit /etc/rainbowscripts.conf adding your values <--" 
   fi
 
   output_message "RainbowScripts updateds to the latest version"
