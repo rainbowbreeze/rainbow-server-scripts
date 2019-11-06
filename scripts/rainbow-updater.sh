@@ -75,22 +75,22 @@ update_scripts() {
 # Param 1 is the file name
 # Param 2 is the destination
 copy_file() {
-	local filename="${1}"
+	local source="${1}"
 	local destination="${2}"
 
-  #echo " -> Copy ${filename} to ${destination}"
-  cp ${filename} ${destination}
+  #echo " -> Copy ${source} to ${destination}"
+  cp ${source} ${destination}
 }
 
 # Copy a file to a particular location and set executable flag
 # Param 1 is the file name
 # Param 2 is the destination
 copy_exec_file() {
-	local filename="${1}"
+	local source="${1}"
 	local destination="${2}"
 
-  copy_file ${filename} ${destination}
-  chmod +x ${destination}
+  chmod +x ${source}
+  copy_file ${source} ${destination}
 }
 
 # Check if the command was launched using root permissions
