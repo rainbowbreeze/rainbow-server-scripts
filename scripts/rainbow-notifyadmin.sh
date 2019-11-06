@@ -38,8 +38,8 @@ check_for_config_file() {
 	fi
 
 	# Workaroud for local execution of the script
-	if [ -f conf/rainbowscripts.conf ]; then
-		. conf/rainbowscripts.conf
+	if [ -f debug-rainbowscripts.conf ]; then
+		. debug-rainbowscripts.conf
 		config_found=1
 	fi
 
