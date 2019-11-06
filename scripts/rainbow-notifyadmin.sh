@@ -87,5 +87,5 @@ fi
 
 check_for_required_vars
 
-message="Message from host ${host_name}\n${message}"
+message="Message from ${host_name}:\n${message}"
 curl -X POST ${server_address}/yellowbot/api/v1.0/intent -H "X-Authorization:${api_key}" -H "Content-Type: application/json" -d "{\"intent\":\"notify_admin\", \"params\":{\"message\":\"${message}\"}}"
