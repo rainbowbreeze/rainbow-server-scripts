@@ -51,8 +51,8 @@ update_scripts() {
   copy_exec_file "scripts/rainbow-updater.sh" "/usr/local/bin/"
 
   # Copy cron jobs
-  copy_exec_file "cron/rainbow-checkpackages.sh" "/etc/cron.daily/"
-  copy_exec_file "cron/rainbow-updatescripts.sh" "/etc/cron.daily/"
+  copy_exec_file "scripts/cron/rainbow-checkpackages.sh" "/etc/cron.daily/"
+  copy_exec_file "scripts/cron/rainbow-updatescripts.sh" "/etc/cron.daily/"
 
   # Copy configurations
   if [ ! -e /etc/rainbowscripts.conf ]; then
@@ -62,10 +62,9 @@ update_scripts() {
 
   # Removing temp dir
   cd
-  echo " > ${tmp_dir}"
   rm -rf ${tmp_dir}
 
-	if [ ${new_config} -eq 1 ]; then
+	if [ -n "${new_config}" ]; then
 		output_message "Before running the scripts, please edit /etc/rainbowscripts.conf addinng your values"
 	fi
 
@@ -97,4 +96,3 @@ copy_exec_file() {
 # Check if the command was launched using root permissions
 check_for_root
 update_scripts
-
