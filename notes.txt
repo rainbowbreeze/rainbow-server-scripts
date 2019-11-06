@@ -1,0 +1,10 @@
+aptitude search '~U' -F "%p" | ./sendtoyellowbutler.sh 
+
+
+
+https://github.com/rainbowbreeze/rainbowscripts/blob/master/scripts/conf/rainbowscripts.conf
+
+
+Arguments mgmt
+https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+http://linuxcommand.org/lc3_wss0120.php

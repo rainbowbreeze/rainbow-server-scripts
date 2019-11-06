@@ -8,42 +8,69 @@
 
 
 # Common vars
+git_repo="https://github.com/rainbowbreeze/rainbowscripts.git/"
 # Current version of the scripts installed on this host
 # current_version="/var/log/rainbow-script-version.txt"
 
-update_scripts() {
-  # Creates the temp directort
-  #local tmp_dir=$(mktemp -d -t ci-$(date +%Y-%m-%d-%H-%M-%S)-XXXXXXXXXX)
-  
-  # First, update the folder with all the scripts
-  # TODO - move to a root folder
-  git pull
-  # TODO check for the git output and, if this file was updates, relauch it
-
-  # Then, copy the files where they need to be copied
-
-  echo "Copying files across the system"
-  # Copy scripts
-  copy_file "scripts/rainbow-notifyadmin.sh" "/usr/local/bin/"
-  #copy_file "scripts/rainbow-updater.sh" "/usr/local/bin/"
-
-  # Copy cron jobs
-  #copy_file "cron/rainbow-checkpackages" "/etc/cron.daily/"
-  #copy_file "cron/rainbow-updatescripts /etc/cron.daily/"
-
-  # Copy configurations
-  # TODO revert command
-  if [ ! -f /etc/rainbowscripts.conf ]; then
-    copy_file "scripts/conf/rainbowscripts.conf" "/etc/"
+# Check for root execution
+check_for_root() {
+  if [[ $EUID -ne 0 ]]; then
+    output_message "This script must be run as root" 
+    exit 1
   fi
-
-  echo "RainbowScripts updateds to the latest version"
-
-  # Copy current version
-  # TODO
-  #cp rainbow-script-version.txt ${current_version}
 }
 
+# Show a message
+output_message() {
+  echo "${1}"
+}
+
+# Update RainbowScripts
+update_scripts() {
+  # Creates the temp directort
+  local tmp_dir=$(mktemp -d -t ci-$(date +%Y-%m-%d-%H-%M-%S)-XXXXXXXXXX)
+  
+  # First, create the folder with all the scripts
+  output_message "Downloading RainbowScripts..."
+  cd ${tmp_dir}
+  local script_dir="repo"
+  git clone -quite ${git_repo} ${script_dir} 2>&1
+  
+  # Check if the download failed
+  # TODO more robust check, based on the output of git
+  if [ ! -d ${script_dir} ]; then
+    output_message "Error while cloning git repo at ${git_repo}. Update aborted."
+    exit 1
+  fi
+
+  # Copy the files where they need to be copied
+  output_message "Installing RainbowScripts on this system"
+  cd ${script_dir}
+  # Copy scripts
+  copy_exec_file "scripts/rainbow-notifyadmin.sh" "/usr/local/bin/"
+  copy_exec_file "scripts/rainbow-updater.sh" "/usr/local/bin/"
+
+  # Copy cron jobs
+  copy_exec_file "cron/rainbow-checkpackages.sh" "/etc/cron.daily/"
+  copy_exec_file "cron/rainbow-updatescripts.sh" "/etc/cron.daily/"
+
+  # Copy configurations
+  if [ ! -e /etc/rainbowscripts.conf ]; then
+    copy_file "scripts/conf/rainbowscripts.conf" "/etc/"
+    local new_config=1
+  fi
+
+  # Removing temp dir
+  cd
+  echo " > ${tmp_dir}"
+  rm -rf ${tmp_dir}
+
+	if [ ${new_config} -eq 1 ]; then
+		output_message "Before running the scripts, please edit /etc/rainbowscripts.conf addinng your values"
+	fi
+
+  output_message "RainbowScripts updateds to the latest version"
+}
 
 # Copy a file to a particular location
 # Param 1 is the file name
@@ -52,37 +79,22 @@ copy_file() {
 	local filename="${1}"
 	local destination="${2}"
 
+  #echo " -> Copy ${filename} to ${destination}"
   cp ${filename} ${destination}
 }
 
 # Copy a file to a particular location and set executable flag
 # Param 1 is the file name
 # Param 2 is the destination
-copy_file_and_set_exec() {
+copy_exec_file() {
 	local filename="${1}"
 	local destination="${2}"
 
-  chmod +x ${filename}
   copy_file ${filename} ${destination}
-}
-
-# Check for root execution
-check_for_root() {
-  if [[ $EUID -ne 0 ]]; then
-    echo "This script must be run as root" 
-    exit 1
-  fi
+  chmod +x ${destination}
 }
 
 # Check if the command was launched using root permissions
 check_for_root
-
 update_scripts
-exit
-
-# Check if an update of the packages is required
-if [ -z ${current_version} ]; then
-  # File doesn't exists, install all the scripts
-  update_scripts
-fi
 
