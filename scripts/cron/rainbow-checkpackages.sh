@@ -8,17 +8,17 @@
 # aptitude search '~U' -F "%p"
 # aptitude versions '?Upgradable'
 
-tmpfile1=$(mktemp)
-aptitude search '~U' -F "%p" > ${tmpfile1} 2>&1
+tmp_file1=$(mktemp)
+aptitude search '~U' -F "%p" > ${tmp_file1} 2>&1
 
 # If there are packages to update
-if [ -s "${tmpfile1}" ]; then
-  tmpfile2=$(mktemp)
-  echo "Packages to update" > ${tmpfile2}
-  cat ${tmpfile1} >> ${tmpfile2}
+if [ -s "${tmp_file1}" ]; then
+  tmp_file2=$(mktemp)
+  echo "Packages to update" > ${tmp_file2}
+  cat ${tmp_file1} >> ${tmp_file2}
   # forge the message and send it
-  cat ${tmpfile2} | rainbow-notifyadmin.sh
-  rm -f ${tmpfile2}
+  cat ${tmp_file2} | rainbow-notifyadmin.sh
+  rm -f ${tmp_file2}
 fi
 
-rm -f ${tmpfile1}
+rm -f ${tmp_file1}

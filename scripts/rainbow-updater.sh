@@ -64,9 +64,9 @@ update_scripts() {
   cd
   rm -rf ${tmp_dir}
 
-	if [ -n "${new_config}" ]; then
-		output_message "Before running the scripts, please edit /etc/rainbowscripts.conf addinng your values"
-	fi
+  if [ -n "${new_config}" ]; then
+    output_message "Before running the scripts, please edit /etc/rainbowscripts.conf addinng your values"
+  fi
 
   output_message "RainbowScripts updateds to the latest version"
 }
