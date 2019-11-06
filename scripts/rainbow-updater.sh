@@ -25,6 +25,28 @@ output_message() {
   echo "${1}"
 }
 
+# Copy a file to a particular location
+# Param 1 is the file name
+# Param 2 is the destination
+copy_file() {
+	local source="${1}"
+	local destination="${2}"
+
+  #echo " -> Copy ${source} to ${destination}"
+  cp ${source} ${destination}
+}
+
+# Copy a file to a particular location and set executable flag
+# Param 1 is the file name
+# Param 2 is the destination
+copy_exec_file() {
+	local source="${1}"
+	local destination="${2}"
+
+  chmod +x ${source}
+  copy_file ${source} ${destination}
+}
+
 # Update RainbowScripts
 update_scripts() {
   # Creates the temp directort
@@ -71,27 +93,6 @@ update_scripts() {
   output_message "RainbowScripts updateds to the latest version"
 }
 
-# Copy a file to a particular location
-# Param 1 is the file name
-# Param 2 is the destination
-copy_file() {
-	local source="${1}"
-	local destination="${2}"
-
-  #echo " -> Copy ${source} to ${destination}"
-  cp ${source} ${destination}
-}
-
-# Copy a file to a particular location and set executable flag
-# Param 1 is the file name
-# Param 2 is the destination
-copy_exec_file() {
-	local source="${1}"
-	local destination="${2}"
-
-  chmod +x ${source}
-  copy_file ${source} ${destination}
-}
 
 # Check if the command was launched using root permissions
 check_for_root
