@@ -73,8 +73,8 @@ update_scripts() {
   copy_exec_file "scripts/rainbow-updater.sh" "/usr/local/bin/"
 
   # Copy cron jobs
-  copy_exec_file "scripts/cron/rainbow-checkpackages.sh" "/etc/cron.daily/"
-  copy_exec_file "scripts/cron/rainbow-updatescripts.sh" "/etc/cron.daily/"
+  copy_exec_file "scripts/cron/rainbow-checkpackages" "/etc/cron.daily/"
+  copy_exec_file "scripts/cron/rainbow-updatescripts" "/etc/cron.daily/"
 
   # Copy configurations
   if [ ! -e /etc/rainbowscripts.conf ]; then

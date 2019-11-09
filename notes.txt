@@ -2,9 +2,14 @@ aptitude search '~U' -F "%p" | ./sendtoyellowbutler.sh
 
 
 
-https://github.com/rainbowbreeze/rainbowscripts/blob/master/scripts/conf/rainbowscripts.conf
-
-
-Arguments mgmt
+## Command line argument management
 https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
 http://linuxcommand.org/lc3_wss0120.php
+
+
+## Cron
+For a cron script to be executed, it cannot have the . in the file name, and PATH may need to be set
+https://askubuntu.com/a/112264
+
+To check for scripts executed by cron, run 
+ run-parts --test /etc/cron.daily

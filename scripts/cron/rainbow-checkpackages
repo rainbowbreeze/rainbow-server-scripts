@@ -1,9 +1,15 @@
 #!/bin/bash
 
+# Part of the RainbowScripts suite
+# License: GNU GENERAL PUBLIC LICENSE, Version 3
+# 
 # This script checks for updates to packages, and inform the server
 #
-#
-# Part of the RainbowScripts suite
+# Remember that, for a cron script to be executed, it cannot have the . in the
+# file name, and PATH may need to be set
+# To check for scripts executed by cron, run 
+#  run-parts --test /etc/cron.daily
+# Reference: https://askubuntu.com/a/112264
 
 
 # aptitude search '~U' -F "%p"
