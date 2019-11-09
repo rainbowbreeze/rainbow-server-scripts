@@ -13,3 +13,5 @@ https://askubuntu.com/a/112264
 
 To check for scripts executed by cron, run 
  run-parts --test /etc/cron.daily
+ sudo run-parts --regex '^rainbow' /etc/cron.daily/
+
