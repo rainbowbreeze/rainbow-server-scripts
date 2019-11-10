@@ -3,7 +3,8 @@
 # Part of the RainbowScripts suite
 # License: GNU GENERAL PUBLIC LICENSE, Version 3
 # 
-# This script checks for updates to packages, and inform the server
+# This script checks for updates to packages, inform the server and, if necessary
+# perform a system upgrage
 #
 # Remember that, for a cron script to be executed, it cannot have the . in the
 # file name, and PATH may need to be set
@@ -22,21 +23,30 @@ output_message() {
 
 # Check what are the packages in the system to update
 check_packages() {
-  tmp_file1=$(mktemp)
+  local tmp_file1=$(mktemp)
   aptitude update
   aptitude search '~U' -F "%p" > ${tmp_file1} 2>&1
 
   # If there are packages to update
   if [ -s "${tmp_file1}" ]; then
-    tmp_file2=$(mktemp)
-    output_message "Packages to update" > ${tmp_file2}
+    local tmp_file2=$(mktemp)
+    echo "Packages to update" > ${tmp_file2}
     cat ${tmp_file1} >> ${tmp_file2}
     # forge the message and send it
     cat ${tmp_file2} | rainbow-notifyadmin.sh
     rm -f ${tmp_file2}
+    upgrade_packages
   fi
 
   rm -f ${tmp_file1}
+}
+
+upgrade_packages() {
+  local tmp_file=$(mktemp)
+  echo "Upgrading the system" > ${tmp_file}
+  sudo aptitude -y full-upgrade -q=2 >> ${tmp_file} 2>&1
+  cat ${tmp_file} | rainbow-notifyadmin.sh
+  rm -f ${tmp_file}
 }
 
 check_packages
