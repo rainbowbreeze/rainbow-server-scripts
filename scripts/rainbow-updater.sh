@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# This scrips update all the Rainbow scripts in the system and reinstall them
-#  in the appropriate directories
+# This scrips update all the Rainbow scripts in the system
+# - Clone the Rainbowscripts repository
+# - Delete potentially old filesand
+# - Copy new files in the appropriate directories
 #
 #
 # Part of the RainbowScripts suite
@@ -23,6 +25,13 @@ check_for_root() {
 # Show a message
 output_message() {
   echo "${1}"
+}
+
+# Delete old files / previous versions of RainbowScripts
+delete_old_files() {
+  output_message "Deleting potentially old files"
+  rm -f /etc/cron.daily/rainbow-checkpackages
+  rm -f /etc/cron.daily/rainbow-updatescripts
 }
 
 # Copy a file to a particular location
@@ -65,16 +74,19 @@ update_scripts() {
     exit 1
   fi
 
+  delete_old_files
+
   # Copy the files where they need to be copied
   output_message "Installing RainbowScripts on this system"
   cd ${script_dir}
   # Copy scripts
   copy_exec_file "scripts/rainbow-notifyadmin.sh" "/usr/local/bin/"
   copy_exec_file "scripts/rainbow-updater.sh" "/usr/local/bin/"
+  copy_exec_file "scripts/rainbow-upgradesystem.sh" "/usr/local/bin/"
 
   # Copy cron jobs
-  copy_exec_file "scripts/cron/rainbow-checkpackages" "/etc/cron.daily/"
-  copy_exec_file "scripts/cron/rainbow-updatescripts" "/etc/cron.daily/"
+  copy_exec_file "scripts/cron/rainbow-cron-packages" "/etc/cron.daily/"
+  copy_exec_file "scripts/cron/rainbow-cron-updater" "/etc/cron.daily/"
 
   # Copy configurations
   if [ ! -e /etc/rainbowscripts.conf ]; then
