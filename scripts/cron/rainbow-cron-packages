@@ -13,4 +13,7 @@
 # Reference: https://askubuntu.com/a/112264
 
 
+# Sleep some seconds, so the other cron job has time to update system files
+# Not elegant, but it works!
+sleep 30
 rainbow-upgradesystem.sh
