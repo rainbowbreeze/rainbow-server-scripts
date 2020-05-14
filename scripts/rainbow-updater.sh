@@ -2,7 +2,7 @@
 
 # This scrips update all the Rainbow scripts in the system
 # - Clone the Rainbowscripts repository
-# - Delete potentially old filesand
+# - Delete potentially old files
 # - Copy new files in the appropriate directories
 #
 #
@@ -34,15 +34,20 @@ delete_old_files() {
   rm -f /etc/cron.daily/rainbow-updatescripts
 }
 
+# Move a file to a particular location
+# Param 1 is the file name
+# Param 2 is the destination
+move_file() {
+  #echo " -> Copy ${source} to ${destination}"
+  mv "${source}" "${destination}"
+}
+
 # Copy a file to a particular location
 # Param 1 is the file name
 # Param 2 is the destination
 copy_file() {
-	local source="${1}"
-	local destination="${2}"
-
   #echo " -> Copy ${source} to ${destination}"
-  cp ${source} ${destination}
+  cp "${source}" "${destination}"
 }
 
 # Copy a file to a particular location and set executable flag
@@ -88,9 +93,25 @@ update_scripts() {
   copy_exec_file "scripts/cron/rainbow-cron-packages" "/etc/cron.daily/"
   copy_exec_file "scripts/cron/rainbow-cron-updater" "/etc/cron.daily/"
 
-  # Copy configurations
-  if [ ! -e /etc/rainbowscripts.conf ]; then
-    copy_file "scripts/conf/rainbowscripts.conf" "/etc/"
+  local config_folder="/etc/rainbowscripts/"
+  local config_notify="/etc/rainbowscripts/notifyadmin.conf"
+
+  # Create the config folder, if necessary
+  if [ ! -d ${config_folder} ]; then
+    mkdir ${config_folder}
+  fi
+
+  # Move older config file to the proper path
+  if [ -e "/etc/rainbowscripts.conf" ]; then
+    move_file "/etc/rainbowscripts.conf" ${config_notify}
+    chmod 644 ${config_notify}
+    local new_config=1
+  fi
+
+  # Copy configurations if config file doesn't exist
+  if [ ! -e ${config_notify} ]; then
+    copy_file "scripts/conf/nofityadmin.conf" "${config_notify}"
+    chmod 644 ${config_notify}
     local new_config=1
   fi
 
@@ -99,7 +120,7 @@ update_scripts() {
   rm -rf ${tmp_dir}
 
   if [ -n "${new_config}" ]; then
-    output_message " --> Before running the scripts, please edit /etc/rainbowscripts.conf adding your values <--" 
+    output_message " --> Before running the scripts, please edit ${config_notify}, adding your values <--" 
   fi
 
   output_message "RainbowScripts updateds to the latest version"

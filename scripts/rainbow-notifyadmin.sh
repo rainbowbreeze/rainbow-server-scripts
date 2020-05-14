@@ -20,7 +20,7 @@ variable_set() {
 
 # Set default vats
 variables_set_defaults() {
-	variable_set "config_file" "/etc/rainbowscripts.conf"
+	variable_set "config_file" "/etc/rainbowscripts/notifyadmin.conf"
 }
 
 # Show a message
