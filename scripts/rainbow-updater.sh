@@ -116,7 +116,7 @@ update_scripts() {
     output_message " --> Before running the scripts, please edit ${config_notify}, adding your values <--" 
   fi
 
-  output_message "RainbowScripts updateds to the latest version"
+  output_message "RainbowScripts updated to the latest version"
 }
 
 

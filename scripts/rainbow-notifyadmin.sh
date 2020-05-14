@@ -3,7 +3,7 @@
 # This script sends text to Yellow Butler service, asking to notify administrator
 #
 # Required files
-# /etc/yellowbutler.conf
+# /etc/rainbowscripts/notifyadmin.conf
 #  Store configurations for yellow butler call, like the API key and the address of the server
 #
 #
