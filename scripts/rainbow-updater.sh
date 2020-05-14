@@ -90,11 +90,13 @@ update_scripts() {
 
   # Create the config folder, if necessary
   if [ ! -d "${config_folder}" ]; then
+    output_message "Creating config folder"
     mkdir "${config_folder}"
   fi
 
-  # Move older config file to the proper path
+  # Move older config file to the new config path
   if [ -e "/etc/rainbowscripts.conf" ]; then
+    output_message "Moving previous configuration file to the appropriate place ${config_notify}" 
     mv "/etc/rainbowscripts.conf" "${config_notify}"
     chmod 644 "${config_notify}"
   fi
