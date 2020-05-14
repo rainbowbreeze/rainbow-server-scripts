@@ -9,6 +9,9 @@
 # Part of the RainbowScripts suite
 
 
+# TOOD
+# Check for missing packages: https://github.com/billw2/rpi-clone/blob/master/rpi-clone
+
 # Common vars
 git_repo="https://github.com/rainbowbreeze/rainbowscripts.git/"
 # Current version of the scripts installed on this host
