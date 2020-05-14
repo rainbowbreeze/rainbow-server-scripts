@@ -34,14 +34,6 @@ delete_old_files() {
   rm -f /etc/cron.daily/rainbow-updatescripts
 }
 
-# Move a file to a particular location
-# Param 1 is the file name
-# Param 2 is the destination
-move_file() {
-  #echo " -> Copy ${source} to ${destination}"
-  mv "${source}" "${destination}"
-}
-
 # Copy a file to a particular location
 # Param 1 is the file name
 # Param 2 is the destination
@@ -97,26 +89,26 @@ update_scripts() {
   local config_notify="/etc/rainbowscripts/notifyadmin.conf"
 
   # Create the config folder, if necessary
-  if [ ! -d ${config_folder} ]; then
-    mkdir ${config_folder}
+  if [ ! -d "${config_folder}" ]; then
+    mkdir "${config_folder}"
   fi
 
   # Move older config file to the proper path
   if [ -e "/etc/rainbowscripts.conf" ]; then
-    move_file "/etc/rainbowscripts.conf" ${config_notify}
-    chmod 644 ${config_notify}
+    mv "/etc/rainbowscripts.conf" "${config_notify}"
+    chmod 644 "${config_notify}"
   fi
 
   # Copy configurations if config file doesn't exist
   if [ ! -e ${config_notify} ]; then
     copy_file "scripts/conf/nofityadmin.conf" "${config_notify}"
-    chmod 644 ${config_notify}
+    chmod 644 "${config_notify}"
     local new_config=1
   fi
 
   # Removing temp dir
   cd
-  rm -rf ${tmp_dir}
+  rm -rf "${tmp_dir}"
 
   if [ -n "${new_config}" ]; then
     output_message " --> Before running the scripts, please edit ${config_notify}, adding your values <--" 
