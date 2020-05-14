@@ -105,7 +105,6 @@ update_scripts() {
   if [ -e "/etc/rainbowscripts.conf" ]; then
     move_file "/etc/rainbowscripts.conf" ${config_notify}
     chmod 644 ${config_notify}
-    local new_config=1
   fi
 
   # Copy configurations if config file doesn't exist
