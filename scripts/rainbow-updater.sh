@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This scrips update all the Rainbow scripts in the system
+# This scrips updates all the Rainbow scripts in the system
 # - Clone the Rainbowscripts repository
 # - Delete potentially old files
 # - Copy new files in the appropriate directories
