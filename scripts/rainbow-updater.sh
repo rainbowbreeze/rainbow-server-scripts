@@ -56,6 +56,17 @@ copy_exec_file() {
   copy_file ${source} ${destination}
 }
 
+# Copy a file to a particular location and set executable flag
+# Param 1 is the file name
+# Param 2 is the destination
+copy_config_file() {
+	local source="${1}"
+	local destination="${2}"
+
+  chmod 640 ${source}
+  copy_file ${source} ${destination}
+}
+
 # Update RainbowScripts
 update_scripts() {
   # Creates the temp directort
@@ -83,41 +94,30 @@ update_scripts() {
   copy_exec_file "scripts/rainbow-notifyadmin.sh" "/usr/local/bin/"
   copy_exec_file "scripts/rainbow-updater.sh" "/usr/local/bin/"
   copy_exec_file "scripts/rainbow-upgradesystem.sh" "/usr/local/bin/"
+  copy_exec_file "scripts/rainbow-backupnas.sh" "/usr/local/bin/"
 
   # Copy cron jobs
   copy_exec_file "scripts/cron/rainbow-cron-packages" "/etc/cron.daily/"
   copy_exec_file "scripts/cron/rainbow-cron-updater" "/etc/cron.daily/"
 
-  local config_folder="/etc/rainbowscripts/"
-  local config_notify="/etc/rainbowscripts/notifyadmin.conf"
-
   # Create the config folder, if necessary
+  local config_folder="/etc/rainbowscripts"
   if [ ! -d "${config_folder}" ]; then
     output_message "Creating config folder"
     mkdir "${config_folder}"
   fi
 
-  # Move older config file to the new config path
-  if [ -e "/etc/rainbowscripts.conf" ]; then
-    output_message "Moving previous configuration file to the appropriate place ${config_notify}" 
-    mv "/etc/rainbowscripts.conf" "${config_notify}"
-    chmod 644 "${config_notify}"
-  fi
-
-  # Copy configurations if config file doesn't exist
-  if [ ! -e ${config_notify} ]; then
-    copy_file "scripts/conf/nofityadmin.conf" "${config_notify}"
-    chmod 644 "${config_notify}"
-    local new_config=1
+  # Copy configuration for notify script if config file doesn't exist
+  for config_source_file in "notifyadmin.conf" "backupnas.conf" "backupnas-include.txt"
+  local config_dest_file="${config_folder}/${config_source_file}"
+  if [ ! -f ${config_dest_file} ]; then
+    copy_config_file "scripts/conf/${config_source_file}" "${config_dest_file}"
+    output_message " --> Before running the scripts, please edit config on ${config_dest_file}, adding your values <--" 
   fi
 
   # Removing temp dir
   cd
   rm -rf "${tmp_dir}"
-
-  if [ -n "${new_config}" ]; then
-    output_message " --> Before running the scripts, please edit ${config_notify}, adding your values <--" 
-  fi
 
   output_message "RainbowScripts updated to the latest version"
 }

@@ -54,7 +54,7 @@ execute_backup() {
 	fi
 
     #rsync -arv --delete --progress -e "ssh" /home/homeassistant backup@192.168.100.2:/volume1/NetBackup/bck_homeassistant/home
-    local result="$(rsync -arv --delete --progress -e \"ssh\" --dry-run --files-from=${include_file} / ${nas_address_and_path} | grep sent )"
+    local result="$(rsync -arv --delete --progress -e \"ssh\" --files-from=${include_file} / ${nas_address_and_path} | grep sent )"
     output_message "Backup executed: ${result}"
 }
 
