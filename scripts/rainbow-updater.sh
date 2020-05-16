@@ -53,8 +53,6 @@ download_repo_and_lauch_update() {
 
   # Removing temp dir
   rm -rf "${tmp_dir}"
-
-  output_message "RainbowScripts updated to the latest version"
 }
 
 
