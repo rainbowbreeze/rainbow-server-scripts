@@ -98,7 +98,7 @@ update_scripts() {
     fi
   done
 
-  cd -
+  cd - > /dev/null 2>&1
   output_message "RainbowScripts updated to the latest version"
 }
 
