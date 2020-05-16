@@ -60,8 +60,14 @@ execute_backup() {
     exit 6
   fi
 
-  #rsync -arv --delete --progress -e "ssh" /home/homeassistant backup@192.168.100.2:/volume1/NetBackup/bck_homeassistant/home
-  local result="$(rsync -arv --delete -e \"ssh -i ${nas_ssh_key_file}\" --files-from=${include_file} / ${nas_address_and_path} | grep sent )"
+  local result=$(rsync -arv --delete -e "ssh -i ${nas_ssh_key_file}" --files-from=${include_file} / ${nas_address_and_path} | grep sent )
+  # TODO check for the error code: save the rsync output on a temp file, and then grep from there
+  # if [ $? -eq 0 ]; then
+  #  output_message "Backup executed: ${result}"
+  #  rainbow-notifyadmin.sh "Backup executed: ${result}"
+  # else
+  #  output_message "Error in the script"
+  # fi
   output_message "Backup executed: ${result}"
   rainbow-notifyadmin.sh "Backup executed: ${result}"
 }
