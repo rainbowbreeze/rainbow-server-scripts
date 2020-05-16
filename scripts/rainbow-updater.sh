@@ -30,13 +30,6 @@ output_message() {
   echo "${1}"
 }
 
-# Delete old files / previous versions of RainbowScripts
-delete_old_files() {
-  output_message "Deleting potentially old files"
-  rm -f /etc/cron.daily/rainbow-checkpackages
-  rm -f /etc/cron.daily/rainbow-updatescripts
-}
-
 # Copy a file to a particular location
 # Param 1 is the file name
 # Param 2 is the destination
@@ -84,8 +77,6 @@ update_scripts() {
     output_message "Error while cloning git repo at ${git_repo}. Update aborted."
     exit 1
   fi
-
-  delete_old_files
 
   # Copy the files where they need to be copied
   output_message "Installing RainbowScripts on this system"
