@@ -100,11 +100,13 @@ update_scripts() {
 
   # Copy configuration for notify script if config file doesn't exist
   for config_source_file in "notifyadmin.conf" "backupnas.conf" "backupnas-include.txt"
-  local config_dest_file="${config_folder}/${config_source_file}"
-  if [ ! -f ${config_dest_file} ]; then
-    copy_config_file "scripts/conf/${config_source_file}" "${config_dest_file}"
-    output_message " --> Before running the scripts, please edit config on ${config_dest_file}, adding your values <--" 
-  fi
+  do
+    local config_dest_file="${config_folder}/${config_source_file}"
+    if [ ! -f ${config_dest_file} ]; then
+      copy_config_file "scripts/conf/${config_source_file}" "${config_dest_file}"
+      output_message " --> Before running the scripts, please edit config on ${config_dest_file}, adding your values <--" 
+    fi
+  done
 
   # Removing temp dir
   cd
