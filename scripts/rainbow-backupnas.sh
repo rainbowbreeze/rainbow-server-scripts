@@ -35,7 +35,6 @@ execute_backup() {
   # Set some vars
   local config_file="/etc/rainbowscripts/backupnas.conf"
   local include_file="/etc/rainbowscripts/backupnas-include.conf"
-  local nas_ssh_key_file="/etc/rainbowscripts/rainbowscripts-nas-rsync-key"
 
   # Read vars from the config file
   if [ -f ${config_file} ]; then
@@ -48,6 +47,11 @@ execute_backup() {
   # Check if all the required vars has a value
   if [ -z "${nas_address_and_path}" ]; then
     output_message "nas_address_and_path var not found. Please check config file at ${config_file}"
+    exit 4
+  fi
+  # Check if all the required vars has a value
+  if [ -z "${nas_ssh_key_file}" ]; then
+    output_message "nas_ssh_key_file var not found. Please check config file at ${config_file}"
     exit 4
   fi
 
