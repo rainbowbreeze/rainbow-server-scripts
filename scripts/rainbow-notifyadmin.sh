@@ -25,7 +25,7 @@ variables_set_defaults() {
 
 # Show a message
 output_message() {
-  echo "${1}"
+  echo ${1}
 }
 
 # Check for the presence of the config file

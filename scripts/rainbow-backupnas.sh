@@ -2,13 +2,16 @@
 
 # This scrips performs a backup to a rsync server
 #
+# TODO
+# - Add a command-line paramenter to introduce a random delay
+#
 #
 # Part of the RainbowScripts suite
 
 
 # Show a message
 output_message() {
-  echo "${1}"
+  echo ${1}
 }
 
 # Check for root execution
@@ -69,7 +72,8 @@ execute_backup() {
   #  output_message "Error in the script"
   # fi
   output_message "Backup executed: ${result}"
-  rainbow-notifyadmin.sh "Backup executed: ${result}"
+  # Full path is necessary, otherwise the comman cannot be found when launched as root in cronjob
+  /usr/local/bin/rainbow-notifyadmin.sh "Backup executed: ${result}"
 }
 
 

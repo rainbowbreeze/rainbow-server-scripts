@@ -19,7 +19,7 @@ check_for_root() {
 
 # Show a message
 output_message() {
-  echo "${1}"
+  echo ${1}
 }
 
 # Check what are the packages in the system to update

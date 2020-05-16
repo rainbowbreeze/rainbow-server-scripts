@@ -21,7 +21,7 @@ check_for_root() {
 
 # Show a message
 output_message() {
-  echo "${1}"
+  echo ${1}
 }
 
 # Copy a file to a particular location
@@ -62,7 +62,7 @@ update_scripts() {
   local script_dir="$(dirname "${script_dir}")"
 
   # Copy the files where they need to be copied
-  output_message "Installing RainbowScripts from ${script_dir}"
+  output_message "Installing RainbowScripts..."
   cd ${script_dir}
   # Copy scripts
   local bin_dir="/usr/local/bin/"

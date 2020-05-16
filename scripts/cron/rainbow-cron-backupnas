@@ -13,5 +13,10 @@
 # Reference: https://askubuntu.com/a/112264
 
 
-# Start at 7:30 am every day, with a randon delay
-30 07 * * * root /usr/local/bin/rainbow-backupnas.sh -d >/dev/null 2>&1
+# Start at 7:30 am every day
+30 07 * * * root /usr/local/bin/rainbow-backupnas.sh > /dev/null 2>&1
+
+# To redirect the output of the command in a file, add this after the command
+# >>/var/log/cronrun 2>&1
+# Example
+# 30 07 * * * root /usr/local/bin/rainbow-backupnas.sh > >>/var/log/rainbow-backupnas-cron 2>&1

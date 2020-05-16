@@ -27,7 +27,7 @@ check_for_root() {
 
 # Show a message
 output_message() {
-  echo "${1}"
+  echo ${1}
 }
 
 # Update RainbowScripts
