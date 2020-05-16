@@ -1,0 +1,5 @@
+# Backup RainbowScripts configurations
+/etc/rainbowscripts
+
+# Add below specific files/folders to backup
+
