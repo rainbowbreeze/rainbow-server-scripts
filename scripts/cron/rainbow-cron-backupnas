@@ -13,5 +13,5 @@
 # Reference: https://askubuntu.com/a/112264
 
 
-# Start at 7:30 am every day
-30 07 * * * root /usr/local/bin/rainbow-backupnas.sh >/dev/null 2>&1
+# Start at 7:30 am every day, with a randon delay
+30 07 * * * root /usr/local/bin/rainbow-backupnas.sh -d >/dev/null 2>&1
