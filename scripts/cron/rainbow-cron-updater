@@ -5,8 +5,8 @@
 # 
 # This script check if an update of the Rainbow scripts is required
 #
-# Remember that, for a cron script to be executed, it cannot have the . in the
-# file name, and PATH may need to be set
+# Remember that, for a cron script to be executed, it cannot have the . or - in
+# the file name, and PATH may need to be set
 # To check for scripts executed by cron, run 
 #  run-parts --test /etc/cron.daily
 # Reference: https://askubuntu.com/a/112264

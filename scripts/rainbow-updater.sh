@@ -90,6 +90,8 @@ update_scripts() {
   # Copy cron jobs
   copy_exec_file "scripts/cron/rainbow-cron-packages" "/etc/cron.daily/"
   copy_exec_file "scripts/cron/rainbow-cron-updater" "/etc/cron.daily/"
+  copy_file "scripts/cron/rainbow-cron-backupnas" "/etc/cron.d"
+  chmod 640 "/etc/cron.d/rainbow-cron-backupnas"  # Maybe it's not really necessary, altought https://unix.stackexchange.com/a/296351
 
   # Create the config folder, if necessary
   local config_folder="/etc/rainbowscripts"
