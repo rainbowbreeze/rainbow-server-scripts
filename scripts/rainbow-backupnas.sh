@@ -32,6 +32,7 @@ execute_backup() {
   # Set some vars
   local config_file="/etc/rainbowscripts/backupnas.conf"
   local include_file="/etc/rainbowscripts/backupnas-include.conf"
+  local nas_ssh_key_file="/etc/rainbowscripts/rainbowscripts-nas-rsync-key"
 
   # Read vars from the config file
   if [ -f ${config_file} ]; then
@@ -53,9 +54,16 @@ execute_backup() {
     exit 5
   fi
 
+  # Check if the file with the files/folders to backup exists
+  if [ ! -f ${nas_ssh_key_file} ]; then
+    output_message "${nas_ssh_key_file} file not found."
+    exit 6
+  fi
+
   #rsync -arv --delete --progress -e "ssh" /home/homeassistant backup@192.168.100.2:/volume1/NetBackup/bck_homeassistant/home
-  local result="$(rsync -arv --delete --progress -e \"ssh\" --files-from=${include_file} / ${nas_address_and_path} | grep sent )"
+  local result="$(rsync -arv --delete -e \"ssh -i ${nas_ssh_key_file}\" --files-from=${include_file} / ${nas_address_and_path} | grep sent )"
   output_message "Backup executed: ${result}"
+  rainbow-notifyadmin.sh "Backup executed: ${result}"
 }
 
 
