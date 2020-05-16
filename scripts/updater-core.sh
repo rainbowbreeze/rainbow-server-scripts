@@ -56,22 +56,30 @@ copy_config_file() {
 
 # Update RainbowScripts
 update_scripts() {
-  local script_dir="${1}"
+  # Get the script path
+  local script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+  #Get the parent folder
+  local script_dir="$(dirname "${script_dir}")"
 
   # Copy the files where they need to be copied
-  output_message "Installing RainbowScripts from ${1}"
+  output_message "Installing RainbowScripts from ${script_dir}"
   cd ${script_dir}
   # Copy scripts
-  copy_exec_file "scripts/rainbow-notifyadmin.sh" "/usr/local/bin/"
-  copy_exec_file "scripts/rainbow-updater.sh" "/usr/local/bin/"
-  copy_exec_file "scripts/rainbow-upgradesystem.sh" "/usr/local/bin/"
-  copy_exec_file "scripts/rainbow-backupnas.sh" "/usr/local/bin/"
+  local bin_dir="/usr/local/bin/"
+  copy_exec_file "scripts/rainbow-notifyadmin.sh" "${bin_dir}"
+  copy_exec_file "scripts/rainbow-updater.sh" "${bin_dir}"
+  copy_exec_file "scripts/rainbow-upgradesystem.sh" "${bin_dir}"
+  copy_exec_file "scripts/rainbow-backupnas.sh" "${bin_dir}"
 
-  # Copy cron jobs
-  copy_exec_file "scripts/cron/rainbow-cron-packages" "/etc/cron.daily/"
-  copy_exec_file "scripts/cron/rainbow-cron-updater" "/etc/cron.daily/"
-  cp scripts/cron/rainbow-cron-backupnas /etc/cron.d/
-  chmod 640 /etc/cron.d/rainbow-cron-backupnas  # Maybe it's not really necessary, altought https://unix.stackexchange.com/a/296351
+  # Copy daily cron jobs
+  local cron_daily_dir="/etc/cron.daily/"
+  copy_exec_file "scripts/cron/rainbow-cron-packages" "${cron_daily_dir}"
+  copy_exec_file "scripts/cron/rainbow-cron-updater" "${cron_daily_dir}"
+
+  # Copy time-specific cron jobs
+  local cron_d_dir="/etc/cron.d/"
+  cp "scripts/cron/rainbow-cron-backupnas" "${cron_d_dir}"
+  chmod 640 "${cron_d_dir}rainbow-cron-backupnas"  # Maybe it's not really necessary, altought https://unix.stackexchange.com/a/296351
 
   # Create the config folder, if necessary
   local config_folder="/etc/rainbowscripts"
@@ -80,7 +88,7 @@ update_scripts() {
     mkdir "${config_folder}"
   fi
 
-  # Copy configuration for notify script if config file doesn't exist
+  # Copy configuration files if they don't already exist
   for config_source_file in "notifyadmin.conf" "backupnas.conf" "backupnas-include.conf"
   do
     local config_dest_file="${config_folder}/${config_source_file}"
