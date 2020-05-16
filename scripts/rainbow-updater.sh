@@ -99,7 +99,7 @@ update_scripts() {
   fi
 
   # Copy configuration for notify script if config file doesn't exist
-  for config_source_file in "notifyadmin.conf" "backupnas.conf" "backupnas-include.txt"
+  for config_source_file in "notifyadmin.conf" "backupnas.conf" "backupnas-include.conf"
   do
     local config_dest_file="${config_folder}/${config_source_file}"
     if [ ! -f ${config_dest_file} ]; then

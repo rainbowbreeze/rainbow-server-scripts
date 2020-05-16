@@ -31,7 +31,7 @@ check_for_rsync() {
 execute_backup() {
   # Set some vars
   local config_file="/etc/rainbowscripts/backupnas.conf"
-  local include_file="/etc/rainbowscripts/backupnas-include.txt"
+  local include_file="/etc/rainbowscripts/backupnas-include.conf"
 
   # Read vars from the config file
   if [ -f ${config_file} ]; then
