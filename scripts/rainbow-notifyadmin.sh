@@ -18,7 +18,7 @@ variable_set() {
 	fi
 }
 
-# Set default vats
+# Set default vars
 variables_set_defaults() {
 	variable_set "config_file" "/etc/rainbowscripts/notifyadmin.conf"
 }
@@ -38,7 +38,7 @@ check_for_config_file() {
 	fi
 
 	# Workaroud for local execution of the script
-	if [ -f debug-rainbowscripts.conf ]; then
+	if [ -f ./conf/debug-rainbowscripts.conf ]; then
 		. debug-rainbowscripts.conf
 		config_found=1
 	fi
