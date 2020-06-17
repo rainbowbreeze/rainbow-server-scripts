@@ -1,5 +1,5 @@
-# rainbowscripts
-Various scripts to manage my Linux machines
+# rainbow-server-scripts
+Various scripts to manage my Linux server machines
 
 ## How to install
 wget https://raw.githubusercontent.com/rainbowbreeze/rainbow-server-scripts/master/scripts/rainbow-updater.sh  
