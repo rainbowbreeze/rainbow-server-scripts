@@ -13,7 +13,7 @@
 # Check for missing packages: https://github.com/billw2/rpi-clone/blob/master/rpi-clone
 
 # Common vars
-git_repo="https://github.com/rainbowbreeze/rainbowscripts.git/"
+git_repo="https://github.com/rainbowbreeze/rainbow-server-scripts.git/"
 # Current version of the scripts installed on this host
 # current_version="/var/log/rainbow-script-version.txt"
 
