@@ -11,7 +11,7 @@
 
 # Check for root execution
 check_for_root() {
-  if [[ $EUID -ne 0 ]]; then
+  if [ $EUID -ne 0 ]; then
     output_message "This script must be run as root" 
     exit 1
   fi
