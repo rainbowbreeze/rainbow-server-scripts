@@ -62,7 +62,7 @@ execute_backup() {
     exit 5
   fi
 
-  # Check if the file with the files/folders to backup exists
+  # Check if the file with the private key for ssh connection exists
   if [ ! -f ${nas_ssh_key_file} ]; then
     output_message "${nas_ssh_key_file} file not found."
     exit 6
