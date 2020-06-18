@@ -24,6 +24,7 @@ check_for_root() {
 
 # Check for the existence of rsync
 check_for_rsync() {
+  # Inspired by https://stackoverflow.com/questions/592620/how-can-i-check-if-a-program-exists-from-a-bash-script
   if [ ! hash rsync 2>/dev/null ]; then
     output_message "rsync command not found" 
     exit 2
