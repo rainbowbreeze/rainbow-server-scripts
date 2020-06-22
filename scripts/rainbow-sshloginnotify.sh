@@ -26,20 +26,17 @@
 #  rainbow-notifyadmin.sh "${message}" > /dev/null 2>&1
 #fi
 
-rainbow-notifyadmin.sh "Event type: ${PAM_TYPE}" > /dev/null 2>&1
-
-if [ -n "$SSH_CLIENT" ] && [ -z "$TMUX" ]; then #Trigger
+if [ ${PAM_TYPE} = "open_session" ]; then
   date_exec="$(date "+%d %b %Y %H:%M")" #Collect date & time.
+
+  #Check what could be done querying ipinfo.io
   tmp_file="$(mktemp)" #Create a temporary file to keep data in. # True temporary file
-  IP=$(echo $SSH_CLIENT | awk '{print $1}') #Get Client IP address.
-  PORT=$(echo $SSH_CLIENT | awk '{print $3}') #Get SSH port
-  curl https://ipinfo.io/$IP -s -o $TMPFILE #Get info on client IP.
+  curl https://ipinfo.io/$PAM_RHOST -s -o $tmp_file #Get info on client IP.
   IP_INFOS="$(jq -r '.org + " - " + .city + ", " + .region + ", " + .country' "$tmp_file")" #Client IP info parsing via jq
-  TEXT="$date_exec: ${USER} logged in from $IP - ${IP_INFOS} port $PORT"
 
-  rainbow-notifyadmin.sh "${TEXT}" > /dev/null 2>&1
+  message="$PAM_USER@$PAM_RHOST login to $PAM_SERVICE at $date_exec - Other info: $IP_INFOS"
+  rm $TMPFILE #clean up after
+
+  rainbow-notifyadmin.sh "${message}" > /dev/null 2>&1
 fi
-rm $TMPFILE #clean up after
-
-
 
