@@ -4,7 +4,8 @@
 #  notification with some of the login info
 #
 # Requires
-# - jq package to be installed (sudo apt install jq)
+# - curl package (sudo apt install curl)
+# - jq package (sudo apt install jq)
 #
 # Inspired by
 # - https://blog.tommyku.com/blog/send-telegram-notification-on-ssh-login/
@@ -12,7 +13,8 @@
 # - https://gitlab.com/snippets/1871482#note_188602535
 #
 # Remember to add the following line to /etc/pam.d/sshd
-# session optional pam_exec.so /use/local/bin/rainbow-sshloginnotify.sh
+# # Rainbow Scripts
+# session optional pam_exec.so /usr/local/bin/rainbow-sshloginnotify.sh
 # Setting the session to ‘optional’ will allow the user to login in case the
 #  script fails. (ex. Telegram servers are down) This prevents you from being
 #  locked out. But setting the session to ‘required’ will enforce the
