@@ -72,6 +72,7 @@ update_scripts() {
   copy_exec_file "scripts/rainbow-updater.sh" "${bin_dir}"
   copy_exec_file "scripts/rainbow-upgradesystem.sh" "${bin_dir}"
   copy_exec_file "scripts/rainbow-backupnas.sh" "${bin_dir}"
+  copy_exec_file "scripts/rainbow-sshloginnotify.sh" "${bin_dir}"
 
   # Copy daily cron jobs
   local cron_daily_dir="/etc/cron.daily/"
