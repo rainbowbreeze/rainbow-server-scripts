@@ -20,6 +20,12 @@
 #  locked out. But setting the session to ‘required’ will enforce the
 #  execution of the script as absolute
 #
+# The different PAM_XXX variables are here https://linux.die.net/man/8/pam_exec
+#
+#
+# TODO
+# - Call ipinfo only when the address is not a local one
+#
 # Part of the RainbowScripts suite
 
 
