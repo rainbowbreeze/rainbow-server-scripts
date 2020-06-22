@@ -43,7 +43,7 @@ copy_exec_file() {
   copy_file ${source} ${destination}
 }
 
-# Copy a file to a particular location and set executable flag
+# Copy a file to a particular location and change its permissions
 # Param 1 is the file name
 # Param 2 is the destination
 copy_config_file() {
@@ -65,6 +65,8 @@ update_scripts() {
   output_message "Installing RainbowScripts..."
   cd ${script_dir}
   # Copy scripts
+  # /usr/local/bin is for normal user programs not managed by the distribution package manager, e.g. locally compiled packages
+  # /usr/local/sbin is for system management programs (not normally used by ordinary users)
   local bin_dir="/usr/local/bin/"
   copy_exec_file "scripts/rainbow-notifyadmin.sh" "${bin_dir}"
   copy_exec_file "scripts/rainbow-updater.sh" "${bin_dir}"
@@ -78,8 +80,8 @@ update_scripts() {
 
   # Copy time-specific cron jobs
   local cron_d_dir="/etc/cron.d/"
-  cp "scripts/cron/rainbow-cron-backupnas" "${cron_d_dir}"
-  chmod 640 "${cron_d_dir}rainbow-cron-backupnas"  # Maybe it's not really necessary, altought https://unix.stackexchange.com/a/296351
+  # Maybe it's not really necessary, altought https://unix.stackexchange.com/a/296351
+  copy_config_file "scripts/cron/rainbow-cron-backupnas" "${cron_d_dir}"
 
   # Create the config folder, if necessary
   local config_folder="/etc/rainbowscripts"

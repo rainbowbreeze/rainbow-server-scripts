@@ -48,7 +48,6 @@ download_repo_and_lauch_update() {
   fi
 
   # Launch the update
-  local script
   ${script_dir}/scripts/updater-core.sh ${script_dir}
 
   # Removing temp dir
