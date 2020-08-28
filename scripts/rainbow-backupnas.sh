@@ -81,12 +81,6 @@ execute_backup() {
   output_message "${result_message}"
   # Full path is necessary, otherwise the comman cannot be found when launched as root in cronjob
   /usr/local/bin/rainbow-notifyadmin.sh "${result_message}"
-
-  
-  #local result=$(rsync -arv --delete -e "ssh -i ${nas_ssh_key_file}" --files-from=${include_file} / ${nas_address_and_path} | grep sent )
-  #output_message "Backup executed: ${result}"
-  # Full path is necessary, otherwise the comman cannot be found when launched as root in cronjob
-  #/usr/local/bin/rainbow-notifyadmin.sh "Backup executed: ${result}"
 }
 
 check_for_root
