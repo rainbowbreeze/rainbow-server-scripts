@@ -75,7 +75,9 @@ execute_backup() {
     local rsync_info=$(grep sent ${rsync_out})
     result_message="Backup executed: ${rsync_info}"
   else
-    local rsync_err=$(grep -e ssh: -e rsync: ${rsync_out})
+    # Unfortunately, two lines are not supported by the notify-admin script
+    #local rsync_err=$(grep -e ssh: -e rsync: ${rsync_out})
+    local rsync_err=$(grep rsync: ${rsync_out})
     result_message="Backup ended with error ${rsync_exit}: ${rsync_err}"
   fi
   output_message "${result_message}"
