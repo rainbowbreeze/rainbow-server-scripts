@@ -81,6 +81,7 @@ execute_backup() {
   output_message "${result_message}"
   # Full path is necessary, otherwise the comman cannot be found when launched as root in cronjob
   /usr/local/bin/rainbow-notifyadmin.sh "${result_message}"
+  rm ${rsync_out}
 }
 
 check_for_root
