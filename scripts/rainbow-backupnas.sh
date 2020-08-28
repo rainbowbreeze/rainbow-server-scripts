@@ -67,19 +67,27 @@ execute_backup() {
     exit 6
   fi
 
-  local result=$(rsync -arv --delete -e "ssh -i ${nas_ssh_key_file}" --files-from=${include_file} / ${nas_address_and_path} | grep sent )
-  # TODO check for the error code: save the rsync output on a temp file, and then grep from there
-  # if [ $? -eq 0 ]; then
-  #  output_message "Backup executed: ${result}"
-  #  rainbow-notifyadmin.sh "Backup executed: ${result}"
-  # else
-  #  output_message "Error in the script"
-  # fi
-  output_message "Backup executed: ${result}"
+  local rsync_out=$(mktemp)
+  rsync -arv --delete -e "ssh -i ${nas_ssh_key_file}" --files-from=${include_file} / ${nas_address_and_path} > ${rsync_out} 2>&1
+  local rsync_exit=$?
+  local result_message=""
+  if [ ${rsync_exit} -eq 0 ]; then
+    local rsync_info=$(grep sent ${rsync_out})
+    result_message="Backup executed: ${rsync_info}"
+  else
+    local rsync_err=$(grep rsync: ${rsync_out})
+    result_message="Backup ended with error ${rsync_exit}: ${rsync_err}"
+  fi
+  output_message "${result_message}"
   # Full path is necessary, otherwise the comman cannot be found when launched as root in cronjob
-  /usr/local/bin/rainbow-notifyadmin.sh "Backup executed: ${result}"
-}
+  /usr/local/bin/rainbow-notifyadmin.sh "${result_message}"
 
+  
+  #local result=$(rsync -arv --delete -e "ssh -i ${nas_ssh_key_file}" --files-from=${include_file} / ${nas_address_and_path} | grep sent )
+  #output_message "Backup executed: ${result}"
+  # Full path is necessary, otherwise the comman cannot be found when launched as root in cronjob
+  #/usr/local/bin/rainbow-notifyadmin.sh "Backup executed: ${result}"
+}
 
 check_for_root
 check_for_rsync
