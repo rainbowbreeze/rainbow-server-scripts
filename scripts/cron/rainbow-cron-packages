@@ -17,4 +17,4 @@
 # Not elegant, but it works!
 /bin/sleep/sleep 60
 /bin/sleep/sleep   `/usr/bin/expr $RANDOM % 600`
-/usr/local/bin/rainbow-upgradesystem.sh
+/usr/local/bin/rainbow-upgradesystem

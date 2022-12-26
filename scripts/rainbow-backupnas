@@ -9,17 +9,17 @@
 # Part of the RainbowScripts suite
 
 
-# Show a message
-output_message() {
-  echo ${1}
-}
-
 # Check for root execution
 check_for_root() {
   if [ $EUID -ne 0 ]; then
     output_message "This script must be run as root" 
     exit 1
   fi
+}
+
+# Show a message
+output_message() {
+  echo ${1}
 }
 
 # Check for the existence of rsync
@@ -75,7 +75,9 @@ execute_backup() {
     local rsync_info=$(grep sent ${rsync_out})
     result_message="Backup executed: ${rsync_info}"
   else
-    local rsync_err=$(grep -e ssh: -e rsync: ${rsync_out})
+    # Unfortunately, two lines are not supported by the notify-admin script
+    #local rsync_err=$(grep -e ssh: -e rsync: ${rsync_out})
+    local rsync_err=$(grep rsync: ${rsync_out})
     result_message="Backup ended with error ${rsync_exit}: ${rsync_err}"
   fi
   output_message "${result_message}"

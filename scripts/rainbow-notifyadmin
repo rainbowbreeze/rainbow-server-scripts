@@ -9,6 +9,12 @@
 #
 # Part of the RainbowScripts suite
 
+
+# Show a message
+output_message() {
+  echo ${1}
+}
+
 # Set a variable if not already set
 variable_set() {
 	local variable="${1}"
@@ -21,11 +27,6 @@ variable_set() {
 # Set default vars
 variables_set_defaults() {
 	variable_set "config_file" "/etc/rainbowscripts/notifyadmin.conf"
-}
-
-# Show a message
-output_message() {
-  echo ${1}
 }
 
 # Check for the presence of the config file

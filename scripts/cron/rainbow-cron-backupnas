@@ -14,7 +14,7 @@
 
 
 # Start at 7:30 am every day
-30 07 * * * root /usr/local/bin/rainbow-backupnas.sh > /dev/null 2>&1
+30 07 * * * root /usr/local/bin/rainbow-backupnas > /dev/null 2>&1
 
 # To redirect the output of the command in a file, add this after the command
 # >>/var/log/cronrun 2>&1
