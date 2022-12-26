@@ -74,24 +74,24 @@ check_for_config_file
 
 # Check for the esistence of a command line argument
 if [ -z "$1" ]; then
-  # read from STDIN, and the text can be piped
-  # echo "Message to send" | thisscript
+    # read from STDIN, and the text can be piped
+    # echo "Message to send" | thisscript
 
-	# Read the first line
-	read -r message
-	# then read the others, attaching a \n only from the second ongoing
-  while read -r line; do
+    # Read the first line
+    read -r message
+    # then read the others, attaching a \n only from the second ongoing
+    while read -r line; do
 		message="${message}\n${line}"
 	done
 else
-  #read the first commmand line argument
-  variable_set "message" "$1"
+    #read the first commmand line argument
+    variable_set "message" "$1"
 fi
 
 check_for_required_vars
 
 #message="${host_name}: ${message}"
-#curl -X POST ${server_address} -H "X-Authorization:${api_key}" -H "Content-Type: application/json" -d "{\"intent\":\"notify_admin\", \"params\":{\"message\":\"${message}\"}}"
+#curl -X POST ${server_address} -H "X-Authorization:${api_key}" -H "Content-Type: application/json" -d "{\"intent\":\"notify_admin\", \"params\":{\"message\":\s"${mesage}\"}}"
 
-curl -s --data "text=$1" --data "chat_id=${chat_id}" 'https://api.telegram.org/bot'${bot_token}'/sendMessage' > /dev/null
+curl -s --data "text=${mesage}" --data "chat_id=${chat_id}" 'https://api.telegram.org/bot'${bot_token}'/sendMessage' > /dev/null
 
