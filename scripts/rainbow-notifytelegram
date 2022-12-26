@@ -18,54 +18,55 @@ output_message() {
 
 # Set a variable if not already set
 variable_set() {
-	local variable="${1}"
-	local value="${2}"
-	if [ -z "${!variable}" ]; then
-		eval "${variable}=\"${value}\""
-	fi
+  local variable="${1}"
+  local value="${2}"
+  if [ -z "${!variable}" ]; then
+    eval "${variable}=\"${value}\""
+  fi
 }
 
 # Set default vars
 variables_set_defaults() {
-	variable_set "config_file" "/etc/rainbowscripts/notifytelegram.conf"
+  variable_set "config_file" "/etc/rainbowscripts/notifytelegram.conf"
 }
 
 # Check for the presence of the config file
 check_for_config_file() {
-	local config_found=0
+  local config_found=0
 
-	if [ -f ${config_file} ]; then
+  if [ -f ${config_file} ]; then
   	. ${config_file}
-		config_found=1
-	fi
+	config_found=1
+  fi
 
-	# Workaroud for local execution of the script
-	if [ -f ./conf/debug-rainbowscripts.conf ]; then
-		. debug-rainbowscripts.conf
-		config_found=1
-	fi
+  # Workaroud for local execution of the script
+  if [ -f ./conf/debug-rainbowscripts.conf ]; then
+    . debug-rainbowscripts.conf
+	 config_found=1
+  fi
 
-	if [ ${config_found} -eq 0 ]; then
-		output_message "Config file not found. Default file is ${config_file}"
-		exit 1
-	fi
+  if [ ${config_found} -eq 0 ]; then
+    output_message "Config file not found. Default file is ${config_file}"
+	exit 1
+  fi
 }
 
+
 check_for_required_vars () {
-	if [ -z "${bot_token}" ]; then
-		output_message "Bot token not found. Please check config file at ${config_file}"
-		exit 2
-	fi
+  if [ -z "${bot_token}" ]; then
+    output_message "Bot token not found. Please check config file at ${config_file}"
+    exit 2
+  fi
 
-	if [ -z "${chat_id}" ]; then
-		output_message "chat_id not found. Please check config file at ${config_file}"
-		exit 2
-	fi
+  if [ -z "${chat_id}" ]; then
+    output_message "chat_id not found. Please check config file at ${config_file}"
+    exit 2
+  fi
 
-	if [ -z "${message}" ]; then
-		output_message "message not found. Please specify it as the first command line argument"
-		exit 2
-	fi
+  if [ -z "${message}" ]; then
+    output_message "message not found. Please specify it as the first command line argument"
+    exit 2
+  fi
 }
 
 
@@ -74,18 +75,18 @@ check_for_config_file
 
 # Check for the esistence of a command line argument
 if [ -z "$1" ]; then
-    # read from STDIN, and the text can be piped
-    # echo "Message to send" | thisscript
+  # read from STDIN, and the text can be piped
+  # echo "Message to send" | thisscript
 
-    # Read the first line
-    read -r message
-    # then read the others, attaching a \n only from the second ongoing
-    while read -r line; do
-		message="${message}\n${line}"
-	done
+  # Read the first line
+  read -r message
+  # then read the others, attaching a \n only from the second ongoing
+  while read -r line; do
+    message="${message}\n${line}"
+  done
 else
-    #read the first commmand line argument
-    variable_set "message" "$1"
+  #read the first commmand line argument
+  variable_set "message" "$1"
 fi
 
 check_for_required_vars
