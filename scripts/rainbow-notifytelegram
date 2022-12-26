@@ -90,8 +90,5 @@ fi
 
 check_for_required_vars
 
-#message="${host_name}: ${message}"
-#curl -X POST ${server_address} -H "X-Authorization:${api_key}" -H "Content-Type: application/json" -d "{\"intent\":\"notify_admin\", \"params\":{\"message\":\s"${mesage}\"}}"
-
-curl -s --data "text=${mesage}" --data "chat_id=${chat_id}" 'https://api.telegram.org/bot'${bot_token}'/sendMessage' > /dev/null
+curl -s --data "text=${message}" --data "chat_id=${chat_id}" 'https://api.telegram.org/bot'${bot_token}'/sendMessage' > /dev/null
 
