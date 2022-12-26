@@ -25,6 +25,8 @@
 #
 # TODO
 # - Call ipinfo only when the address is not a local one
+# - Call all the command on a separate thread, so the login time is drastically reduced, especially in case
+#    of network errors
 #
 # Part of the RainbowScripts suite
 
