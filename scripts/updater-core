@@ -77,11 +77,12 @@ update_scripts() {
   # Copy scripts
   cd ${script_dir}
   copy_exec_file "scripts/rainbow-notifyadmin" "${bin_dir}"
+  copy_exec_file "scripts/rainbow-notifytelegram" "${bin_dir}"
   copy_exec_file "scripts/rainbow-updater" "${bin_dir}"
   copy_exec_file "scripts/rainbow-upgradesystem" "${bin_dir}"
   copy_exec_file "scripts/rainbow-backupnas" "${bin_dir}"
   copy_exec_file "scripts/rainbow-sshloginnotify" "${bin_dir}"
-
+ 
   # Copy daily cron jobs
   local cron_daily_dir="/etc/cron.daily/"
   copy_exec_file "scripts/cron/rainbow-cron-packages" "${cron_daily_dir}"
@@ -100,7 +101,7 @@ update_scripts() {
   fi
 
   # Copy configuration files if they don't already exist
-  for config_source_file in "notifyadmin.conf" "backupnas.conf" "backupnas-include.conf"
+  for config_source_file in "notifyadmin.conf" "notifytelegram.conf" "backupnas.conf" "backupnas-include.conf"
   do
     local config_dest_file="${config_folder}/${config_source_file}"
     if [ ! -f ${config_dest_file} ]; then
