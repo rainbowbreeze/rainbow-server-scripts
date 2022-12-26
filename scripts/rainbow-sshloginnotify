@@ -14,7 +14,7 @@
 #
 # Remember to add the following line to /etc/pam.d/sshd
 # # Rainbow Scripts
-# session optional pam_exec.so /usr/local/bin/rainbow-sshloginnotify.sh
+# session optional pam_exec.so /usr/local/bin/rainbow-sshloginnotify
 # Setting the session to ‘optional’ will allow the user to login in case the
 #  script fails. (ex. Telegram servers are down) This prevents you from being
 #  locked out. But setting the session to ‘required’ will enforce the

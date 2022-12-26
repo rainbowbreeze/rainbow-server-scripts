@@ -79,7 +79,7 @@ check_for_config_file
 # Check for the esistence of a command line argument
 if [ -z "$1" ]; then
   # read from STDIN, and the text can be piped
-  # echo "Message to send" | thisscript.sh
+  # echo "Message to send" | thisscript
 
 	# Read the first line
 	read -r message

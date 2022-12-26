@@ -2,10 +2,10 @@
 Various scripts to manage my Linux server machines
 
 ## How to install
-wget https://raw.githubusercontent.com/rainbowbreeze/rainbow-server-scripts/master/scripts/rainbow-updater.sh  
-chmod +x rainbow-updater.sh  
-./rainbow-updater.sh  
-rm rainbow-updater.sh  
+wget https://raw.githubusercontent.com/rainbowbreeze/rainbow-server-scripts/master/scripts/rainbow-updater  
+chmod +x rainbow-updater  
+./rainbow-updater  
+rm rainbow-updater  
 
 
 ## NOTES
@@ -22,5 +22,5 @@ To redirect the output of the command in a file, add this after the command
 ```
 Example
 ```
-30 07 * * * root /usr/local/bin/rainbow-backupnas.sh > >>/var/log/rainbow-backupnas-cron 2>&1
+30 07 * * * root /usr/local/bin/rainbow-backupnas > >>/var/log/rainbow-backupnas-cron 2>&1
 ```
