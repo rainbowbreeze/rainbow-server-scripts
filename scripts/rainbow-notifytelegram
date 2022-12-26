@@ -90,5 +90,5 @@ fi
 
 check_for_required_vars
 
-curl -s --data "text=${message}" --data "chat_id=${chat_id}" 'https://api.telegram.org/bot'${bot_token}'/sendMessage' > /dev/null
+curl -s --data "text=${message}" --data "chat_id=${chat_id}" 'https://api.telegram.org/bot'${bot_token}'/sendMessage' > /dev/null 2>&1
 
