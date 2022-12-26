@@ -45,6 +45,6 @@ if [ ${PAM_TYPE} = "open_session" ]; then
   message="$PAM_USER@$PAM_RHOST login to $PAM_SERVICE at $date_exec - Other info: $IP_INFOS"
   rm $TMPFILE #clean up after
 
-  rainbow-notifyadmin "${message}" > /dev/null 2>&1
+  rainbow-notifytelegram "${message}" > /dev/null 2>&1
 fi
 

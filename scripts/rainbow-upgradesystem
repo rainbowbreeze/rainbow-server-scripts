@@ -36,6 +36,7 @@ check_packages() {
     cat ${tmp_file1} >> ${tmp_file2}
     # forge the message and send it
     cat ${tmp_file2} | rainbow-notifyadmin
+    cat ${tmp_file2} | rainbow-notifytelegram
     rm -f ${tmp_file2}
     upgrade_packages
   else
@@ -51,6 +52,7 @@ upgrade_packages() {
   echo "Upgrading the system" > ${tmp_file}
   aptitude -y full-upgrade -q=2 >> ${tmp_file} 2>&1
   cat ${tmp_file} | rainbow-notifyadmin
+  cat ${tmp_file} | rainbow-notifytelegram
   rm -f ${tmp_file}
   output_message " System upgrade done!"
 }
