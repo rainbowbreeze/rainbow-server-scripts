@@ -74,7 +74,8 @@ check_hosts() {
     if ping -c 1 -W 1 "${host}" &> /dev/null; then
       true
     else
-      rainbow-notifytelegram "Alert: ${host} is down"
+      # Full path is necessary, otherwise the comman cannot be found when launched as root in cronjob
+      /usr/local/bin/rainbow-notifytelegram "Alert: ${host} is down"
     fi
   done
 }
