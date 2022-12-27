@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Part of the RainbowScripts suite
+# License: GNU GENERAL PUBLIC LICENSE, Version 3
+# 
+# This script performs backup of important files on NAS
+# The scrit is added to /etc/cron.d, so it's run in accordance with NAS wake-up time
+#
+# Remember that, for a cron script to be executed, it cannot have the . or - in
+# the file name, and PATH may need to be set
+# To check for scripts executed by cron, run 
+#  run-parts --test /etc/cron.daily
+# Reference: https://askubuntu.com/a/112264
+
+
+# Every 10 minutes
+*/10 * * * * root /usr/local/bin/rainbow-checkhosts > /dev/null 2>&1
+
+# To redirect the output of the command in a file, add this after the command
+# >>/var/log/cronrun 2>&1
+# Example
+# 30 07 * * * root /usr/local/bin/rainbow-backupnas > >>/var/log/rainbow-backupnas-cron 2>&1
