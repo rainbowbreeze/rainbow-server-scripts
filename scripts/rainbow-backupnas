@@ -22,16 +22,16 @@ output_message() {
   echo ${1}
 }
 
-# Check for the existence of rsync
-check_for_rsync() {
+
+# Execute the backup
+execute_backup() {
+
+  # Check for the existence of rsync
   if ! hash rsync 2>/dev/null; then
     output_message "rsync command not found" 
     exit 2
   fi
-}
 
-# Execute the backup
-execute_backup() {
   # Set some vars
   local config_file="/etc/rainbowscripts/backupnas.conf"
   local include_file="/etc/rainbowscripts/backupnas-include.conf"
@@ -88,5 +88,4 @@ execute_backup() {
 }
 
 check_for_root
-check_for_rsync
 execute_backup

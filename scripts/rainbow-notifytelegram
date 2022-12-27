@@ -30,24 +30,24 @@ variables_set_defaults() {
   variable_set "config_file" "/etc/rainbowscripts/notifytelegram.conf"
 }
 
-# Check for the presence of the config file
-check_for_config_file() {
+# Check for the presence of the config file, and load the config
+load_config_from_file() {
   local config_found=0
 
   if [ -f ${config_file} ]; then
   	. ${config_file}
-	config_found=1
+	  config_found=1
   fi
 
   # Workaroud for local execution of the script
   if [ -f ./conf/debug-rainbowscripts.conf ]; then
     . debug-rainbowscripts.conf
-	 config_found=1
+	  config_found=1
   fi
 
   if [ ${config_found} -eq 0 ]; then
     output_message "Config file not found. Default file is ${config_file}"
-	exit 1
+	  exit 1
   fi
 }
 
@@ -71,7 +71,7 @@ check_for_required_vars () {
 
 
 variables_set_defaults
-check_for_config_file
+load_config_from_file
 
 # Check for the esistence of a command line argument
 if [ -z "$1" ]; then

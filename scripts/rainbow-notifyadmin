@@ -30,7 +30,7 @@ variables_set_defaults() {
 }
 
 # Check for the presence of the config file
-check_for_config_file() {
+load_config_from_file() {
   local config_found=0
 
   if [ -f ${config_file} ]; then
@@ -74,7 +74,7 @@ check_for_required_vars () {
 
 
 variables_set_defaults
-check_for_config_file
+load_config_from_file
 
 # Check for the esistence of a command line argument
 if [ -z "$1" ]; then
