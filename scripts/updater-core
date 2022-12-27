@@ -57,7 +57,7 @@ copy_config_file() {
 # Update RainbowScripts
 update_scripts() {
   # Get the script path
-  local script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+  local script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
   #Get the parent folder
   local script_dir="$(dirname "${script_dir}")"
 
@@ -70,11 +70,11 @@ update_scripts() {
   local bin_dir="/usr/local/bin/"
 
   # Remove old .sh files, a legacy from the past
-  [ -f "${bin_dir}rainbow-notifyadmin.sh" ] &&  rm "${bin_dir}rainbow-notifyadmin.sh"
-  [ -f "${bin_dir}rainbow-updater.sh" ] &&  rm "${bin_dir}rainbow-updater.sh"
-  [ -f "${bin_dir}rainbow-upgradesystem.sh" ] &&  rm "${bin_dir}rainbow-upgradesystem.sh"
-  [ -f "${bin_dir}rainbow-backupnas.sh" ] &&  rm "${bin_dir}rainbow-backupnas.sh"
-  [ -f "${bin_dir}rainbow-sshloginnotify.sh" ] &&  rm "${bin_dir}rainbow-sshloginnotify.sh"
+  # [ -f "${bin_dir}rainbow-notifyadmin.sh" ] &&  rm "${bin_dir}rainbow-notifyadmin.sh"
+  # [ -f "${bin_dir}rainbow-updater.sh" ] &&  rm "${bin_dir}rainbow-updater.sh"
+  # [ -f "${bin_dir}rainbow-upgradesystem.sh" ] &&  rm "${bin_dir}rainbow-upgradesystem.sh"
+  # [ -f "${bin_dir}rainbow-backupnas.sh" ] &&  rm "${bin_dir}rainbow-backupnas.sh"
+  # [ -f "${bin_dir}rainbow-sshloginnotify.sh" ] &&  rm "${bin_dir}rainbow-sshloginnotify.sh"
 
   # Copy scripts
   cd ${script_dir}
