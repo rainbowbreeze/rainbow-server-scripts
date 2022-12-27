@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# This script checks if a list of hosts are up'nd running.
+# This script is automatically added to a cronjob
+#
+# Required files
+# /etc/rainbowscripts/checkhosts.conf
+#  Store configurations for the list of hosts to check
+#
+#
+# Part of the RainbowScripts suite
+
+
+# Check for root execution
+check_for_root() {
+  if [ $EUID -ne 0 ]; then
+    output_message "This script must be run as root" 
+    exit 1
+  fi
+}
+
+# Show a message
+output_message() {
+  echo ${1}
+}
+
+# Set a variable if not already set
+variable_set() {
+  local variable="${1}"
+  local value="${2}"
+  if [ -z "${!variable}" ]; then
+    eval "${variable}=\"${value}\""
+  fi
+}
+
+# Set default vars
+variables_set_defaults() {
+  variable_set "config_file" "/etc/rainbowscripts/checkhosts.conf"
+}
+
+# Check for the presence of the config file
+check_for_config_file() {
+  local config_found=0
+
+  if [ -f ${config_file} ]; then
+  	. ${config_file}
+	config_found=1
+  fi
+
+  # Workaroud for local execution of the script
+  if [ -f ./conf/debug-rainbowscripts.conf ]; then
+    . debug-rainbowscripts.conf
+	 config_found=1
+  fi
+
+  if [ ${config_found} -eq 0 ]; then
+    output_message "Config file not found. Default file is ${config_file}"
+	exit 1
+  fi
+}
+
+
+check_for_required_vars () {
+  if [ -z "${hosts}" ]; then
+    output_message "Hosts list not found. Please check config file at ${config_file}"
+    exit 2
+  fi
+}
+
+
+check_hosts() {
+  for host in ${hosts}
+  do
+    if ping -c 1 -W 1 "${host}" &> /dev/null; then
+      true
+    else
+      rainbow-notifytelegram "Alert: ${host} is down"
+    fi
+  done
+}
+
+check_for_root
+variables_set_defaults
+check_for_config_file
+check_for_required_vars
+check_hosts
