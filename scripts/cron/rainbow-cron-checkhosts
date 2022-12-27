@@ -18,4 +18,4 @@
 # To redirect the output of the command in a file, add this after the command
 # >>/var/log/cronrun 2>&1
 # Example
-# 30 07 * * * root /usr/local/bin/rainbow-backupnas >> /var/log/rainbow-backupnas-cron 2>&1
+# 30 07 * * * root /usr/local/bin/rainbow-backupnas >> /var/log/rainbow-checkhosts-cron 2>&1
