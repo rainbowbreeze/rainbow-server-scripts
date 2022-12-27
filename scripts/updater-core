@@ -84,6 +84,7 @@ update_scripts() {
   copy_exec_file "scripts/rainbow-upgradesystem" "${bin_dir}"
   copy_exec_file "scripts/rainbow-backupnas" "${bin_dir}"
   copy_exec_file "scripts/rainbow-sshloginnotify" "${bin_dir}"
+  copy_exec_file "scripts/rainbow-checkhosts" "${bin_dir}"
  
   # Copy daily cron jobs
   local cron_daily_dir="/etc/cron.daily/"
@@ -94,6 +95,7 @@ update_scripts() {
   local cron_d_dir="/etc/cron.d/"
   # Maybe it's not really necessary, altought https://unix.stackexchange.com/a/296351
   copy_config_file "scripts/cron/rainbow-cron-backupnas" "${cron_d_dir}"
+  copy_config_file "scripts/cron/rainbow-cron-checkhosts" "${cron_d_dir}"
 
   # Create the config folder, if necessary
   local config_folder="/etc/rainbowscripts"
@@ -103,7 +105,7 @@ update_scripts() {
   fi
 
   # Copy configuration files if they don't already exist
-  for config_source_file in "notifyadmin.conf" "notifytelegram.conf" "backupnas.conf" "backupnas-include.conf"
+  for config_source_file in "notifyadmin.conf" "notifytelegram.conf" "backupnas.conf" "backupnas-include.conf" "checkhosts.conf"
   do
     local config_dest_file="${config_folder}/${config_source_file}"
     if [ ! -f ${config_dest_file} ]; then
