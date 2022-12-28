@@ -1,6 +1,9 @@
-# Start a service that returns some core machine signal, in a plan JSON format
+# Start a service that returns some core machine signal, in a plan JSON format.
+# Requires python3
 #
-# curl --get localhost:23123
+# To test the service:
+#  curl --get localhost:23123
+#
 #
 # Part of the RainbowScripts suite
 
