@@ -28,8 +28,8 @@ output_message() {
 # Param 1 is the file name
 # Param 2 is the destination
 copy_file() {
-  #echo " -> Copy ${source} to ${destination}"
-  cp "${source}" "${destination}"
+  #echo " -> Copy ${1} to ${2}"
+  cp "${1}" "${2}"
 }
 
 # Copy a file to a particular location and set executable flag
@@ -39,8 +39,8 @@ copy_exec_file() {
 	local source="${1}"
 	local destination="${2}"
 
-  chmod +x ${source}
-  copy_file ${source} ${destination}
+  chmod +x "${source}"
+  copy_file "${source}" "${destination}"
 }
 
 # Copy a file to a particular location and change its permissions.
@@ -51,8 +51,8 @@ copy_config_file() {
 	local source="${1}"
 	local destination="${2}"
 
-  chmod 640 ${source}
-  copy_file ${source} ${destination}
+  chmod 640 "${source}"
+  copy_file "${source}" "${destination}"
 }
 
 # Copy a file to a particular location and change its permissions.
@@ -63,8 +63,8 @@ copy_service_file() {
 	local source="${1}"
 	local destination="${2}"
 
-  chmod 644 ${source}
-  copy_file ${source} ${destination}
+  chmod 644 "${source}"
+  copy_file "${source}" "${destination}"
 }
 
 # Update RainbowScripts
@@ -100,7 +100,7 @@ update_scripts() {
   copy_exec_file "scripts/rainbow-upgradesystem" "${bin_dir}"
   copy_exec_file "scripts/rainbow-sshloginnotify" "${bin_dir}"
   copy_file "scripts/rainbow-monitoragent.py" "${bin_dir}"
- 
+   
   # Copy daily cron jobs
   local cron_daily_dir="/etc/cron.daily/"
   copy_exec_file "scripts/cron/rainbow-cron-packages" "${cron_daily_dir}"
