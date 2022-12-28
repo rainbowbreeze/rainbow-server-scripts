@@ -1,11 +1,15 @@
 # rainbow-server-scripts
+
 Various scripts to manage my Linux homelab servers.
-- Perform a simple backup of the system via rsync
-- Check if a list of hosts are up'nd running
-- Send a message via Telegram
-- Send a message via a specialized bot
-- Perform system upgrade
-- Notify for an SSH login
+- rainbow-backupnas: Perform a simple backup of the system via rsync
+- rainbow-checkhosts: Check if a list of hosts are up'nd running
+- rainbow-notifyadmin: Send a message via a specialized bot
+- rainbow-monitoragent: Start a services that returns core system vitals if queried
+- rainbow-notifytelegram: Send a message via Telegram
+- rainbow-sshloginnotify: Notify for an SSH login
+- rainbow-updater: Install / upgrade Rainbowscripts
+- rainbow-upgradesystem: Perform system upgrade
+
 
 ## How to install
 ```
@@ -20,7 +24,7 @@ rm rainbow-updater
 In order to debug locally the scripts, without installing them, all the config vars can be written in file ```./conf/debug-rainbowscripts.conf``` - Scripts will automatically pick them up.  
 
 
-## NOTES
+## Notes
 
 Script conventions
 - Why ${} to refer to var name? To refer to the precise var name, when concatenating with other strings: http://www.compciv.org/topics/bash/variables-and-substitution/
