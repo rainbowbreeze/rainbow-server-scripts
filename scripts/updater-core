@@ -43,7 +43,8 @@ copy_exec_file() {
   copy_file ${source} ${destination}
 }
 
-# Copy a file to a particular location and change its permissions
+# Copy a file to a particular location and change its permissions.
+#  Generally used for configuration files.
 # Param 1 is the file name
 # Param 2 is the destination
 copy_config_file() {
@@ -54,12 +55,24 @@ copy_config_file() {
   copy_file ${source} ${destination}
 }
 
+# Copy a file to a particular location and change its permissions.
+#  Generally used for service files.
+# Param 1 is the file name
+# Param 2 is the destination
+copy_service_file() {
+	local source="${1}"
+	local destination="${2}"
+
+  chmod 644 ${source}
+  copy_file ${source} ${destination}
+}
+
 # Update RainbowScripts
 update_scripts() {
   # Get the script path
-  local script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
+  local base_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
   #Get the parent folder
-  local script_dir="$(dirname "${script_dir}")"
+  local base_dir="$(dirname "${base_dir}")"
 
   # Copy the files where they need to be copied
   output_message "Installing / Updating RainbowScripts..."
@@ -76,15 +89,17 @@ update_scripts() {
   # [ -f "${bin_dir}rainbow-backupnas.sh" ] &&  rm "${bin_dir}rainbow-backupnas.sh"
   # [ -f "${bin_dir}rainbow-sshloginnotify.sh" ] &&  rm "${bin_dir}rainbow-sshloginnotify.sh"
 
+  cd ${base_dir}
+
   # Copy scripts
-  cd ${script_dir}
+  copy_exec_file "scripts/rainbow-backupnas" "${bin_dir}"
+  copy_exec_file "scripts/rainbow-checkhosts" "${bin_dir}"
   copy_exec_file "scripts/rainbow-notifyadmin" "${bin_dir}"
   copy_exec_file "scripts/rainbow-notifytelegram" "${bin_dir}"
   copy_exec_file "scripts/rainbow-updater" "${bin_dir}"
   copy_exec_file "scripts/rainbow-upgradesystem" "${bin_dir}"
-  copy_exec_file "scripts/rainbow-backupnas" "${bin_dir}"
   copy_exec_file "scripts/rainbow-sshloginnotify" "${bin_dir}"
-  copy_exec_file "scripts/rainbow-checkhosts" "${bin_dir}"
+  copy_file "scripts/rainbow-monitoragent.py" "${bin_dir}"
  
   # Copy daily cron jobs
   local cron_daily_dir="/etc/cron.daily/"
@@ -96,6 +111,10 @@ update_scripts() {
   # Maybe it's not really necessary, altought https://unix.stackexchange.com/a/296351
   copy_config_file "scripts/cron/rainbow-cron-backupnas" "${cron_d_dir}"
   copy_config_file "scripts/cron/rainbow-cron-checkhosts" "${cron_d_dir}"
+
+  # Copy systemd services
+  local systemd_dir="/etc/systemd/system/"
+  copy_service_file "scripts/systemd/rainbow-monitoragent.service" "${systemd_dir}"
 
   # Create the config folder, if necessary
   local config_folder="/etc/rainbowscripts"

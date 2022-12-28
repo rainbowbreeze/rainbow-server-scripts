@@ -1,0 +1,40 @@
+# This systemd service create an agent to query for monitoring core machine signals.
+#
+# Require
+# - python3
+# Required files
+# - /usr/local/bin/rainbow-monitoragent.py
+#
+# To enable the service
+# - sudo systemctl daemon-reload (make systemd aware of the new services
+# - sudo systemctl enable rainbow-monitoragent.service (start the service at every reboot)
+#
+# To check if the service is enabled
+# - sudo systemctl is-enabled rainbow-monitoragent.service
+#
+# To disable your service on every reboot
+# - sudo systemctl disable example.service
+#
+#
+# Part of the RainbowScripts suite
+
+[Unit]
+Description=Rainbow-MonitorAgent - keeps monitored some system signals
+# Server starts after the network is online
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+# This indicates the start-up type of a process for a given systemd service.
+# Simple: the default mode
+Type=simple
+# This specifies if a service should be restarted--depending on circumstances--or not.
+# on-success: it will be restarted only when the service process exits cleanly (exit code of 0), and other conditions
+Restart=always
+RestartSec=1
+User=root
+# The command that needs to be executed when the service starts
+ExecStart=/usr/bin/python3 /usr/local/bin/rainbow-monitoragent.py
+
+[Install]
+WantedBy=multi-user.target
