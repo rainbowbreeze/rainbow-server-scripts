@@ -8,6 +8,7 @@
 # To enable the service
 # - sudo systemctl daemon-reload (make systemd aware of the new services
 # - sudo systemctl enable rainbow-monitoragent.service (start the service at every reboot)
+# - sudo systemctl start rainbow-monitoragent.service (start the service now)
 #
 # To check if the service is enabled
 # - sudo systemctl is-enabled rainbow-monitoragent.service

@@ -83,11 +83,16 @@ update_scripts() {
   local bin_dir="/usr/local/bin/"
 
   # Remove old .sh files, a legacy from the past
+  # outputmessage "Removing old files"
   # [ -f "${bin_dir}rainbow-notifyadmin.sh" ] &&  rm "${bin_dir}rainbow-notifyadmin.sh"
   # [ -f "${bin_dir}rainbow-updater.sh" ] &&  rm "${bin_dir}rainbow-updater.sh"
   # [ -f "${bin_dir}rainbow-upgradesystem.sh" ] &&  rm "${bin_dir}rainbow-upgradesystem.sh"
   # [ -f "${bin_dir}rainbow-backupnas.sh" ] &&  rm "${bin_dir}rainbow-backupnas.sh"
   # [ -f "${bin_dir}rainbow-sshloginnotify.sh" ] &&  rm "${bin_dir}rainbow-sshloginnotify.sh"
+
+  output_message "Stopping systemd services"
+  systemctl stop rainbow-monitoragent.service
+  systemctl disable rainbow-monitoragent.service
 
   cd ${base_dir}
 
@@ -132,6 +137,14 @@ update_scripts() {
       output_message " --> Before running the scripts, please edit config on ${config_dest_file}, adding your values <--" 
     fi
   done
+
+  # Refresh the services
+  output_message "Restart systemd services"
+  systemctl daemon-reload
+  # Start the service at every boot
+  systemctl enable rainbow-monitoragent.service
+  # Start the service now
+  systemctl start rainbow-monitoragent.service
 
   cd - > /dev/null 2>&1
   output_message "RainbowScripts updated to the latest version"
