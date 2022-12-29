@@ -32,7 +32,7 @@ class MyServer(BaseHTTPRequestHandler):
         # Mem:         990024      176120       36020      173492      777884      579468
         # Swap:             0           0           0
         # --------------------
-        _memory_tot, _memory_used, _memory_free = map(int, os.popen('free').readlines()[1].split()[1:4])
+        _memory_tot, _memory_used, _memory_free = map(int, os.popen('free -b').readlines()[1].split()[1:4])
         
         # Read disk stats
         # Example result:
