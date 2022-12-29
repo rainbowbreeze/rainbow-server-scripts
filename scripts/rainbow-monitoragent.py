@@ -46,12 +46,12 @@ class MyServer(BaseHTTPRequestHandler):
             "ram_total": int(_memory_tot),
             "ram_free": int(_memory_free),
             "ram_used": int(_memory_used),
-            "disk_root_total": int(_disk_root_total) / 1024,
-            "disk_root_used": int(_disk_root_used) / 1024,
-            "disk_root_free": int(_disk_root_free) / 1024,
-            "disk_media_total": int(_disk_media_total) / 1024,
-            "disk_media_used": int(_disk_media_used) / 1024,
-            "disk_media_free": int(_disk_media_free) / 1024
+            "disk_root_total": int(_disk_root_total) / 1048576,  # Megabyte
+            "disk_root_used": int(_disk_root_used) / 1048576,
+            "disk_root_free": int(_disk_root_free) / 1048576,
+            "disk_media_total": int(_disk_media_total) / 1048576,
+            "disk_media_used": int(_disk_media_used) / 1048576,
+            "disk_media_free": int(_disk_media_free) / 1048576
         }
         # and return the string
         _signals_str = json.dumps(_signals)
