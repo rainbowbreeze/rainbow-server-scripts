@@ -32,7 +32,7 @@ class MyServer(BaseHTTPRequestHandler):
         # Mem:         990024      176120       36020      173492      777884      579468
         # Swap:             0           0           0
         # --------------------
-        _memory_tot, _memory_used, _memory_free = map(int, os.popen('free -m').readlines()[1].split()[1:4])
+        _memory_tot, _memory_used, _memory_free = map(int, os.popen('free').readlines()[1].split()[1:4])
         
         # Read disk stats
         # Example result:
@@ -46,12 +46,12 @@ class MyServer(BaseHTTPRequestHandler):
             "ram_total": int(_memory_tot),
             "ram_free": int(_memory_free),
             "ram_used": int(_memory_used),
-            "disk_root_total": int(_disk_root_total) / 1048576,  # Megabyte
-            "disk_root_used": int(_disk_root_used) / 1048576,
-            "disk_root_free": int(_disk_root_free) / 1048576,
-            "disk_media_total": int(_disk_media_total) / 1048576,
-            "disk_media_used": int(_disk_media_used) / 1048576,
-            "disk_media_free": int(_disk_media_free) / 1048576
+            "disk_root_total": int(_disk_root_total),
+            "disk_root_used": int(_disk_root_used),
+            "disk_root_free": int(_disk_root_free),
+            "disk_media_total": int(_disk_media_total),
+            "disk_media_used": int(_disk_media_used),
+            "disk_media_free": int(_disk_media_free)
         }
         # and return the string
         _signals_str = json.dumps(_signals)
