@@ -42,7 +42,7 @@ class MyServer(BaseHTTPRequestHandler):
 
         # Creates the final signal object
         _signals = {
-            "cpu_temp": int(_cpu_temperature) / 1000,
+            "cpu_temperature": int(_cpu_temperature) / 1000,
             "ram_total": int(_memory_tot),
             "ram_free": int(_memory_free),
             "ram_used": int(_memory_used),
