@@ -93,3 +93,7 @@ check_for_required_vars
 
 curl -s --data "text=${message}" --data "chat_id=${chat_id}" 'https://api.telegram.org/bot'${bot_token}'/sendMessage' > /dev/null 2>&1
 
+# Temp workaround
+message=`wget -O - https://www.myip.com/ -nv | grep globe_network.png`
+curl -s --data "text=${message}" --data "chat_id=${chat_id}" 'https://api.telegram.org/bot'${bot_token}'/sendMessage' > /dev/null 2>&1
+
