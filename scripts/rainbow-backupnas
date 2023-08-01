@@ -84,6 +84,8 @@ execute_backup() {
   # Full path is necessary, otherwise the comman cannot be found when launched as root in cronjob
   /usr/local/bin/rainbow-notifytelegram "${result_message}"
   rm ${rsync_out}
+
+  output_message "`wget -O - https://www.myip.com/ -nv | grep globe_network.png`"
 }
 
 check_for_root
