@@ -72,7 +72,7 @@ execute_backup() {
   local rsync_exit=$?
   local result_message=""
   if [ ${rsync_exit} -eq 0 ]; then
-    local rsync_info=$(grep sent ${rsync_out})
+    local rsync_info=$(grep '^sent ' ${rsync_out})
     result_message="Backup executed: ${rsync_info}"
   else
     # Unfortunately, two lines are not supported by the notify-admin script
