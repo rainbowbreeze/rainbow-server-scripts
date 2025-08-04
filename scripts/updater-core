@@ -107,7 +107,13 @@ update_scripts() {
   copy_file "scripts/rainbow-monitoragent.py" "${bin_dir}"
    
   # Copy daily cron jobs
-  local cron_daily_dir="/etc/cron.daily/"
+  if [ -d "/etc/cron.daily" ]; then
+    # Debian / Ubuntu
+    local cron_daily_dir="/etc/cron.daily/"
+  else
+    # Alpine
+    local cron_daily_dir="/etc/periodic/daily/"
+  fi
   copy_exec_file "scripts/cron/rainbow-cron-packages" "${cron_daily_dir}"
   copy_exec_file "scripts/cron/rainbow-cron-updater" "${cron_daily_dir}"
 
