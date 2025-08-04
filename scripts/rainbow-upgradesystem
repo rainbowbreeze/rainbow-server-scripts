@@ -22,8 +22,8 @@ output_message() {
   echo ${1}
 }
 
-# Check what are the packages in the system to update
-check_packages() {
+# Upgrade system packages on Debian-like systems
+upgrade_on_debian() {
   local tmp_file1=$(mktemp)
   aptitude update
   aptitude search '~U' -F "%p" > ${tmp_file1} 2>&1
@@ -44,6 +44,21 @@ check_packages() {
   fi
 
   rm -f ${tmp_file1}
+}
+
+# Check what are the packages in the system to update
+check_packages() {
+  # Expand some strings, in particular $NAME, to get the OS name
+  local os_name="$( . /etc/os-release && printf '%s\n' "$NAME" )"
+
+  case "${os_name}" in 
+  *Alpine*)
+    echo "I'm still learning how to upgrade the system in Alpine" | rainbow-notifytelegram
+    ;;
+  *)
+    upgrade_on_debian
+    ;;
+  esac
 }
 
 upgrade_packages() {
