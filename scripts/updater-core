@@ -124,8 +124,11 @@ update_scripts() {
   copy_config_file "scripts/cron/rainbow-cron-checkhosts" "${cron_d_dir}"
 
   # Copy systemd services
+  # At the moment, it works only for debian-based systems
   local systemd_dir="/etc/systemd/system/"
-  copy_service_file "scripts/systemd/rainbow-monitoragent.service" "${systemd_dir}"
+  if [ -d "${systemd_dir}" ]; then
+    copy_service_file "scripts/systemd/rainbow-monitoragent.service" "${systemd_dir}"
+  fi
 
   # Create the config folder, if necessary
   local config_folder="/etc/rainbowscripts"
@@ -145,12 +148,15 @@ update_scripts() {
   done
 
   # Refresh the services
-  output_message "Restart systemd services"
-  systemctl daemon-reload
-  # Start the service at every boot
-  systemctl enable rainbow-monitoragent.service
-  # Start the service now
-  systemctl start rainbow-monitoragent.service
+  # At the moment, it works only for debian-based systems
+    if [ -d "${systemd_dir}" ]; then
+    output_message "Restart systemd services"
+    systemctl daemon-reload
+    # Start the service at every boot
+    systemctl enable rainbow-monitoragent.service
+    # Start the service now
+    systemctl start rainbow-monitoragent.service
+  fi
 
   cd - > /dev/null 2>&1
   output_message "RainbowScripts updated to the latest version"
