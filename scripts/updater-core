@@ -95,7 +95,7 @@ update_scripts() {
 
   case "${os_name}" in 
   *Alpine*)
-    output_message "No systemd services available in ${os_name}"
+    output_message "  >> No systemd services available in ${os_name}"
     ;;
   *)
     output_message "Stopping systemd services"
