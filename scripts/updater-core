@@ -163,7 +163,6 @@ update_scripts() {
 
   # Refresh the services
   # At the moment, it works only for debian-based systems
-  # At the moment, it works only for debian-based systems
   case "${os_name}" in 
   *Alpine*)
     ;;
