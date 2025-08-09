@@ -25,7 +25,7 @@ output_message() {
 # Upgrade system packages on Debian-like systems, via normal apt
 upgrade_on_debian() {
   local tmp_file1=$(mktemp)
-  apt update
+  apt update > /dev/null 2>&1
   # output format is 
   # frr-pythontools/stable 10.2.3-1+pve1 all [upgradable from: 10.2.2-1+pve1]
   # frr/stable 10.2.3-1+pve1 amd64 [upgradable from: 10.2.2-1+pve1]
