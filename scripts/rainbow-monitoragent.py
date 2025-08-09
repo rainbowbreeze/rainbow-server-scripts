@@ -38,7 +38,12 @@ class MyServer(BaseHTTPRequestHandler):
         # Example result:
         #  usage(total=12882804736, used=8147230720, free=4735574016)
         _disk_root_total, _disk_root_used, _disk_root_free = shutil.disk_usage('/')
-        _disk_media_total, _disk_media_used, _disk_media_free = shutil.disk_usage('/media/volumes')
+        if os.path.isdir('/media/volumes'):
+          _disk_media_total, _disk_media_used, _disk_media_free = shutil.disk_usage('/media/volumes')
+        else:
+          _disk_media_total = 0
+          _disk_media_used = 0
+          _disk_media_free = 0
 
         # Creates the final signal object
         _signals = {
