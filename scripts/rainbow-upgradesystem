@@ -22,8 +22,47 @@ output_message() {
   echo ${1}
 }
 
-# Upgrade system packages on Debian-like systems
+# Upgrade system packages on Debian-like systems, via normal apt
 upgrade_on_debian() {
+  local tmp_file1=$(mktemp)
+  apt update
+  # output format is 
+  # frr-pythontools/stable 10.2.3-1+pve1 all [upgradable from: 10.2.2-1+pve1]
+  # frr/stable 10.2.3-1+pve1 amd64 [upgradable from: 10.2.2-1+pve1]
+  # so it get the text before the first / char
+  apt list --upgradable | grep '/' | cut -d'/' -f1 > ${tmp_file1} 2>&1
+  
+  # File exists and has a size greater than zero 
+  if [ -s ${tmp_file1} ]; then
+    # The file is not-empty, so there are packages to update
+    output_message "Notify about packages to upgrade..."
+    local tmp_file2=$(mktemp)
+    echo "Packages to upgrade:" > ${tmp_file2}
+    cat ${tmp_file1} >> ${tmp_file2}
+    cat ${tmp_file2} | rainbow-notifytelegram
+
+    output_message "Upgrading packages..."
+    echo "Upgrading the system" > ${tmp_file2}
+    apt -y dist-upgrade >> ${tmp_file2} 2>&1
+    if [ $? -eq 0 ]; then
+      # All good, no need to send other alerts
+      output_message " System upgrade done!"
+      # Clean-up
+      rm -f ${tmp_file2}
+    else
+      output_message "Error in upgrading packages..."
+      cat "Error in the apt -y dist-upgrade command, check ${tmp_file2}" | rainbow-notifytelegram
+    fi
+
+  else
+    output_message "No packages to upgrade"
+  fi
+
+  rm -f ${tmp_file1}
+}
+
+# Upgrade system packages on Debian-like systems, using aptitude
+upgrade_on_debian_via_aptitude() {
   local tmp_file1=$(mktemp)
   aptitude update
   aptitude search '~U' -F "%p" > ${tmp_file1} 2>&1
@@ -38,7 +77,7 @@ upgrade_on_debian() {
     cat ${tmp_file2} | rainbow-notifyadmin
     cat ${tmp_file2} | rainbow-notifytelegram
     rm -f ${tmp_file2}
-    upgrade_packages
+    upgrade_packages_on_debian_via_aptitude
   else
     output_message "No packages to upgrade"
   fi
@@ -61,7 +100,8 @@ check_packages() {
   esac
 }
 
-upgrade_packages() {
+# Upgrade via aptitude command
+upgrade_packages_on_debian_via_aptitude() {
   output_message "Upgrading packages..."
   local tmp_file=$(mktemp)
   echo "Upgrading the system" > ${tmp_file}
