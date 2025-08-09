@@ -46,8 +46,12 @@ upgrade_on_alpine() {
     # All good, packages were upgraded, or no packages to upgrade
 
     # Captures potentially upgraded packages
+    # First awk obtain the packages name, one per line
+    # Second awk replace the \n with ', '
+    #  but only adding a ', ' to all the lines apart the first one
+    #  using printf which skips \n, instead of print
     local tmp_file1=$(mktemp)
-    grep 'Upgrading ' ${tmp_apk_full_output} | awk '{print $3}' > ${tmp_file1} 2>&1
+    grep 'Upgrading ' ${tmp_apk_full_output} | awk '{print $3}' | awk 'NR > 1 { printf "," }; { printf "%s", $0 }' > ${tmp_file1} 2>&1
 
     # File exists and has a size greater than zero 
     if [ -s ${tmp_file1} ]; then
@@ -81,7 +85,13 @@ upgrade_on_debian() {
   # frr-pythontools/stable 10.2.3-1+pve1 all [upgradable from: 10.2.2-1+pve1]
   # frr/stable 10.2.3-1+pve1 amd64 [upgradable from: 10.2.2-1+pve1]
   # so it get the text before the first / char
-  apt list --upgradable | grep '/' | cut -d'/' -f1 > ${tmp_file1} 2>&1
+ 
+  # Extract the packages lis
+  # cut takes all the string before the '/' char
+  # awk replace the \n with ', '
+  #  but only adding a ', ' to all the lines apart the first one
+  #  using printf which skips \n, instead of print
+  apt list --upgradable | grep '/' | cut -d'/' -f1 > ${tmp_file1} | awk 'NR > 1 { printf "," }; { printf "%s", $0 }' 2>&1
   
   # File exists and has a size greater than zero 
   if [ -s ${tmp_file1} ]; then
