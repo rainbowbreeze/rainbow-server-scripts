@@ -1,4 +1,5 @@
 # This systemd service create an agent to query for monitoring core machine signals.
+# Used in Debian-like systems
 #
 # Require
 # - python3
@@ -12,6 +13,9 @@
 #
 # To check if the service is enabled
 # - sudo systemctl is-enabled rainbow-monitoragent.service
+#
+# To check the status of the service
+# - sudo systemctl status rainbow-monitoragent.service
 #
 # To disable your service on every reboot
 # - sudo systemctl disable example.service
