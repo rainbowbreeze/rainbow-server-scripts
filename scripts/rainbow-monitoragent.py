@@ -21,9 +21,10 @@ class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
 
         # Read the cpu temperature
-        _cpu_temp = 0
-        with open(r"/sys/class/thermal/thermal_zone0/temp") as File:
-            _cpu_temperature = File.readline()
+        _cpu_temperature = 0
+        if os.path.isfile("/sys/class/thermal/thermal_zone0/temp"):
+            with open(r"/sys/class/thermal/thermal_zone0/temp") as File:
+                _cpu_temperature = File.readline()
 
         # Read the memory stats
         # free command output
