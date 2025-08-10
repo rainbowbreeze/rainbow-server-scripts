@@ -15,6 +15,6 @@
 
 # Sleep some seconds, so the other cron job has time to update system files
 # Not elegant, but it works!
-/bin/sleep/sleep 60
-/bin/sleep/sleep   `/usr/bin/expr $RANDOM % 600`
+/bin/sleep 60
+/bin/sleep   `/usr/bin/expr $RANDOM % 600`
 /usr/local/bin/rainbow-upgradesystem
