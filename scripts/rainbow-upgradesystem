@@ -60,17 +60,18 @@ upgrade_on_alpine() {
       echo "Packages to upgrade:" > ${tmp_file2}
       cat ${tmp_file1} >> ${tmp_file2}
       cat ${tmp_file2} | rainbow-notifytelegram
+      rm -f ${tmp_file1}
+      rm -f ${tmp_file2}
       output_message " System upgrade done!"
     else
       output_message "No packages to upgrade"
+      echo "No packages to upgrade" | rainbow-notifytelegram
     fi
     rm -f ${tmp_apk_full_output}
-    rm -f ${tmp_file1}
-    rm -f ${tmp_file2}
 
   else
     output_message "Error in upgrading packages..."
-    cat "Error in the apk command, check ${tmp_apk_full_output}" | rainbow-notifytelegram
+    echo "Error in the apk command, check ${tmp_apk_full_output}" | rainbow-notifytelegram
   fi
 
 
@@ -112,11 +113,12 @@ upgrade_on_debian() {
       rm -f ${tmp_file2}
     else
       output_message "Error in upgrading packages..."
-      cat "Error in the apt -y dist-upgrade command, check ${tmp_file2}" | rainbow-notifytelegram
+      echo "Error in the apt -y dist-upgrade command, check ${tmp_file2}" | rainbow-notifytelegram
     fi
 
   else
     output_message "No packages to upgrade"
+    echo "No packages to upgrade" | rainbow-notifytelegram
   fi
 
   rm -f ${tmp_file1}
