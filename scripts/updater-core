@@ -132,17 +132,16 @@ update_scripts() {
   # Copy time-specific cron jobs
   local cron_d_dir="/etc/cron.d/"
   # Maybe it's not really necessary, altought https://unix.stackexchange.com/a/296351
-  copy_config_file "scripts/cron/rainbow-cron-backupnas" "${cron_d_dir}"
-  copy_config_file "scripts/cron/rainbow-cron-checkhosts" "${cron_d_dir}"
+  copy_service_file "scripts/cron/rainbow-cron-backupnas" "${cron_d_dir}"
+  copy_service_file "scripts/cron/rainbow-cron-checkhosts" "${cron_d_dir}"
 
   # Copy service files
   case "${os_name}" in 
   *Alpine*)
     # Copy openrc files
     # The service definition file
-    copy_service_file "scripts/init.d/rainbow-monitoragent-alpine" "/etc/init.d/"
+    copy_exec_file "scripts/init.d/rainbow-monitoragent" "/etc/init.d/"
     # And the scripts to update the pid and launch the real monitor agent
-    copy_exec_file "scripts/rainbow-monitoragent-alpine.sh" "${bin_dir}"
     ;;
   *)
     # Copy systemd services

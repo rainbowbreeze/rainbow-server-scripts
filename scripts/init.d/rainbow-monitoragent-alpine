@@ -1,6 +1,0 @@
-#!/sbin/openrc-run
-name="Rainbow Monitor Agent"         
-description="Exposes via a webservice the core vitals of the machine"           
-command="/usr/local/bin/rainbow-monitoragent-alpine.sh"
-command_background=true
-pidfile="/run/rainbow-monitoragent.pid"
