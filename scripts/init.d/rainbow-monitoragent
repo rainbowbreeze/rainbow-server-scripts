@@ -4,7 +4,6 @@ name="Rainbow Monitor Agent"
 description="Exposes via a webservice the core vitals of the machine"
 
 # The command to execute, pointing to your Python script.
-# command="/usr/local/bin/rainbow-monitoragent-alpine.sh"
 command="/usr/bin/python3 /usr/local/bin/rainbow-monitoragent.py"
 
 # Run the command in the background.
@@ -12,5 +11,4 @@ command_background=true
 
 # The pidfile is used by OpenRC to track the process ID.
 # ${RC_SVCNAME} is a variable that OpenRC replaces with the service name.
-#pidfile="/run/rainbow-monitoragent.pid"
 pidfile="/run/${RC_SVCNAME}.pid"
