@@ -140,15 +140,14 @@ update_scripts() {
   *Alpine*)
     # Copy openrc files
     # The service definition file
-    copy_service_file "init.d/rainbow-monitoragent-alpine" "/etc/init.d/"
+    copy_service_file "scripts/init.d/rainbow-monitoragent-alpine" "/etc/init.d/"
     # And the scripts to update the pid and launch the real monitor agent
     copy_exec_file "scripts/rainbow-monitoragent-alpine.sh" "${bin_dir}"
     ;;
   *)
     # Copy systemd services
-    local systemd_dir="/etc/systemd/system/"
     # The service definition file
-    copy_service_file "scripts/systemd/rainbow-monitoragent.service" "${systemd_dir}"
+    copy_service_file "scripts/systemd/rainbow-monitoragent.service" "/etc/systemd/system/"
     ;;
   esac
 
