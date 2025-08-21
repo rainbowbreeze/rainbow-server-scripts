@@ -6,7 +6,7 @@
 # This script performs backup of important files on NAS
 # The scrit is added to /etc/cron.d, so it's run in accordance with NAS wake-up time
 #
-# Remember that, for a cron script to be executed, it cannot have the . or - in
+# Remember that, for a cron script to be executed, it cannot have the . in
 # the file name, and PATH may need to be set
 # To check for scripts executed by cron, run 
 #  run-parts --test /etc/cron.daily

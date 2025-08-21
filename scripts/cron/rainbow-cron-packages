@@ -6,12 +6,15 @@
 # This script checks for updates to packages, inform the server and, if necessary
 # perform a system upgrage
 #
-# Remember that, for a cron script to be executed, it cannot have the . or - in
+# Remember that, for a cron script to be executed, it cannot have the . in
 # the file name, and PATH may need to be set
 # To check for scripts executed by cron, run 
 #  run-parts --test /etc/cron.daily
 # Reference: https://askubuntu.com/a/112264
 
+# Because the script may call other rainbow scripts, setting
+# the path so they can be reacheable within the caller script.
+export PATH="/usr/local/bin:$PATH"
 
 # Sleep some seconds, so the other cron job has time to update system files
 # Not elegant, but it works!
