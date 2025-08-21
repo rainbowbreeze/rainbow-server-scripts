@@ -95,7 +95,9 @@ update_scripts() {
 
   case "${os_name}" in 
   *Alpine*)
-    output_message "  >> No systemd services available in ${os_name}"
+    output_message "Stopping openrc services"
+    rc-service rainbow-monitoragent stop
+    rc-update del rainbow-monitoragent
     ;;
   *)
     output_message "Stopping systemd services"
@@ -133,13 +135,19 @@ update_scripts() {
   copy_config_file "scripts/cron/rainbow-cron-backupnas" "${cron_d_dir}"
   copy_config_file "scripts/cron/rainbow-cron-checkhosts" "${cron_d_dir}"
 
-  # Copy systemd services
-  # At the moment, it works only for debian-based systems
+  # Copy service files
   case "${os_name}" in 
   *Alpine*)
+    # Copy openrc files
+    # The service definition file
+    copy_service_file "init.d/rainbow-monitoragent-alpine" "/etc/init.d/"
+    # And the scripts to update the pid and launch the real monitor agent
+    copy_exec_file "scripts/rainbow-monitoragent-alpine.sh" "${bin_dir}"
     ;;
   *)
+    # Copy systemd services
     local systemd_dir="/etc/systemd/system/"
+    # The service definition file
     copy_service_file "scripts/systemd/rainbow-monitoragent.service" "${systemd_dir}"
     ;;
   esac
@@ -162,9 +170,13 @@ update_scripts() {
   done
 
   # Refresh the services
-  # At the moment, it works only for debian-based systems
   case "${os_name}" in 
   *Alpine*)
+    output_message "Restart openrc services"
+    # Start the service at every boot
+    rc-update add rainbow-monitoragent
+    # Start the service now
+    rc-service rainbow-monitoragent start
     ;;
   *)
     output_message "Restart systemd services"
