@@ -39,12 +39,12 @@ class MyServer(BaseHTTPRequestHandler):
         # Example result:
         #  usage(total=12882804736, used=8147230720, free=4735574016)
         _disk_root_total, _disk_root_used, _disk_root_free = shutil.disk_usage('/')
-        if os.path.isdir('/media/volumes'):
-          _disk_media_total, _disk_media_used, _disk_media_free = shutil.disk_usage('/media/volumes')
+        if os.path.isdir('/mnt/data'):
+          _disk_data_total, _disk_data_used, _disk_data_free = shutil.disk_usage('/mnt/data')
         else:
-          _disk_media_total = 0
-          _disk_media_used = 0
-          _disk_media_free = 0
+          _disk_data_total = 0
+          _disk_data_used = 0
+          _disk_data_free = 0
 
         # Creates the final signal object
         _signals = {
@@ -55,9 +55,9 @@ class MyServer(BaseHTTPRequestHandler):
             "disk_root_total": int(_disk_root_total),
             "disk_root_used": int(_disk_root_used),
             "disk_root_free": int(_disk_root_free),
-            "disk_media_total": int(_disk_media_total),
-            "disk_media_used": int(_disk_media_used),
-            "disk_media_free": int(_disk_media_free)
+            "disk_data_total": int(_disk_data_total),
+            "disk_data_used": int(_disk_data_used),
+            "disk_data_free": int(_disk_data_free)
         }
         # and return the string
         _signals_str = json.dumps(_signals)
