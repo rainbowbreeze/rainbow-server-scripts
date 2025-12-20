@@ -39,8 +39,8 @@ class MyServer(BaseHTTPRequestHandler):
         # Example result:
         #  usage(total=12882804736, used=8147230720, free=4735574016)
         _disk_root_total, _disk_root_used, _disk_root_free = shutil.disk_usage('/')
-        if os.path.isdir('/mnt/data'):
-          _disk_data_total, _disk_data_used, _disk_data_free = shutil.disk_usage('/mnt/data')
+        if os.path.isdir('/mnt/app-data'):
+          _disk_data_total, _disk_data_used, _disk_data_free = shutil.disk_usage('/mnt/app-data')
         else:
           _disk_data_total = 0
           _disk_data_used = 0
