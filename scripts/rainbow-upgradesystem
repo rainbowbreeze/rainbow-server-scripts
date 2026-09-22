@@ -5,13 +5,14 @@
 #
 # Part of the RainbowScripts suite
 
+set -euo pipefail
 
 # aptitude search '~U' -F "%p"
 # aptitude versions '?Upgradable'
 
 # Check for root execution
 check_for_root() {
-  if [ $EUID -ne 0 ]; then
+  if [ "$EUID" -ne 0 ]; then
     output_message "This script must be run as root" 
     exit 1
   fi
@@ -19,98 +20,91 @@ check_for_root() {
 
 # Show a message
 output_message() {
-  echo ${1}
+  echo "${1}"
 }
 
 
 # Upgrade system packages on Alpine-like systems, via normal apk
 upgrade_on_alpine() {
-  local tmp_apk_full_output=$(mktemp)
-  # Command ouput is in format
-  # fetch http://debian.ethz.ch/alpine/v3.22/main/x86_64/APKINDEX.tar.gz
-  # fetch http://debian.ethz.ch/alpine/v3.22/community/x86_64/APKINDEX.tar.gz
-  # (1/12) Upgrading runc (1.3.0-r1 -> 1.3.0-r2)
-  # (2/12) Upgrading containerd (2.1.3-r0 -> 2.1.3-r1)
-  # (3/12) Upgrading glib (2.84.3-r0 -> 2.84.4-r0)
-  # Executing busybox-1.37.0-r19.trigger
-  # Executing glib-2.84.4-r0.trigger
-  # OK: 469 MiB in 142 packages
+  if ! hash apk 2>/dev/null; then
+    output_message "apk command not found"
+    exit 2
+  fi
+
+  local tmp_apk_full_output
+  tmp_apk_full_output=$(mktemp)
+  local tmp_file1
+  tmp_file1=$(mktemp)
+  trap 'rm -f "${tmp_apk_full_output}" "${tmp_file1}"' EXIT
 
   # Capture the whole command output
-  apk -U upgrade > ${tmp_apk_full_output} 2>&1
-  # Save the exit code of the command in a variable
-  local apk_exit_code=$?
+  local apk_exit_code=0
+  apk -U upgrade > "${tmp_apk_full_output}" 2>&1 || apk_exit_code=$?
 
   # Check if the upgrade went well
-  if [ ${apk_exit_code} -eq 0 ]; then
+  if [ "${apk_exit_code}" -eq 0 ]; then
     # All good, packages were upgraded, or no packages to upgrade
-
-    # Captures potentially upgraded packages
-    # First awk obtain the packages name, one per line
-    # Second awk replace the \n with ', '
-    #  but only adding a ', ' to all the lines apart the first one
-    #  using printf which skips \n, instead of print
-    local tmp_file1=$(mktemp)
-    grep 'Upgrading ' ${tmp_apk_full_output} | awk '{print $3}' | awk 'NR > 1 { printf "," }; { printf "%s", $0 }' > ${tmp_file1} 2>&1
+    grep 'Upgrading ' "${tmp_apk_full_output}" | awk '{print $3}' | awk 'NR > 1 { printf "," }; { printf "%s", $0 }' > "${tmp_file1}" 2>&1 || true
 
     # File exists and has a size greater than zero 
-    if [ -s ${tmp_file1} ]; then
+    if [ -s "${tmp_file1}" ]; then
       output_message "Notify about packages to upgrade..."
-      local tmp_file2=$(mktemp)
-      echo "Packages to upgrade:" > ${tmp_file2}
-      cat ${tmp_file1} >> ${tmp_file2}
-      cat ${tmp_file2} | rainbow-notifytelegram
-      rm -f ${tmp_file1}
-      rm -f ${tmp_file2}
+      local tmp_file2
+      tmp_file2=$(mktemp)
+      trap 'rm -f "${tmp_apk_full_output}" "${tmp_file1}" "${tmp_file2}"' EXIT
+      
+      echo "Packages to upgrade:" > "${tmp_file2}"
+      cat "${tmp_file1}" >> "${tmp_file2}"
+      cat "${tmp_file2}" | rainbow-notifytelegram
       output_message " System upgrade done!"
     else
       output_message "No packages to upgrade"
       echo "No packages to upgrade" | rainbow-notifytelegram
     fi
-    rm -f ${tmp_apk_full_output}
-
   else
     output_message "Error in upgrading packages..."
     echo "Error in the apk command, check ${tmp_apk_full_output}" | rainbow-notifytelegram
   fi
-
-
-  rm -f ${tmp_file1}
 }
 
 # Upgrade system packages on Debian-like systems, via normal apt
 upgrade_on_debian() {
-  local tmp_file1=$(mktemp)
-  apt update > /dev/null 2>&1
-  # Command output format is 
-  # frr-pythontools/stable 10.2.3-1+pve1 all [upgradable from: 10.2.2-1+pve1]
-  # frr/stable 10.2.3-1+pve1 amd64 [upgradable from: 10.2.2-1+pve1]
-  # so it get the text before the first / char
- 
-  # Extract the packages lis
-  # cut takes all the string before the '/' char
-  # awk replace the \n with ', '
-  #  but only adding a ', ' to all the lines apart the first one
-  #  using printf which skips \n, instead of print
-  apt list --upgradable | grep '/' | cut -d'/' -f1 > ${tmp_file1} | awk 'NR > 1 { printf "," }; { printf "%s", $0 }' 2>&1
+  if ! hash apt 2>/dev/null; then
+    output_message "apt command not found"
+    exit 2
+  fi
+
+  local tmp_file1
+  tmp_file1=$(mktemp)
+  trap 'rm -f "${tmp_file1}"' EXIT
+
+  apt update > /dev/null 2>&1 || true
+  
+  apt list --upgradable 2>/dev/null | grep '/' | cut -d'/' -f1 > "${tmp_file1}" || true
+  
+  # awk formatting inplace or a new file
+  local pkg_list
+  pkg_list=$(awk 'NR > 1 { printf "," }; { printf "%s", $0 }' "${tmp_file1}")
+  echo "${pkg_list}" > "${tmp_file1}"
   
   # File exists and has a size greater than zero 
-  if [ -s ${tmp_file1} ]; then
+  if [ -s "${tmp_file1}" ] && [ -n "${pkg_list}" ]; then
     # The file is not-empty, so there are packages to update
     output_message "Notify about packages to upgrade..."
-    local tmp_file2=$(mktemp)
-    echo "Packages to upgrade:" > ${tmp_file2}
-    cat ${tmp_file1} >> ${tmp_file2}
-    cat ${tmp_file2} | rainbow-notifytelegram
+    local tmp_file2
+    tmp_file2=$(mktemp)
+    trap 'rm -f "${tmp_file1}" "${tmp_file2}"' EXIT
+
+    echo "Packages to upgrade:" > "${tmp_file2}"
+    cat "${tmp_file1}" >> "${tmp_file2}"
+    cat "${tmp_file2}" | rainbow-notifytelegram
 
     output_message "Upgrading packages..."
-    echo "Upgrading the system" > ${tmp_file2}
-    apt -y dist-upgrade >> ${tmp_file2} 2>&1
-    if [ $? -eq 0 ]; then
+    echo "Upgrading the system" > "${tmp_file2}"
+    
+    if apt -y dist-upgrade >> "${tmp_file2}" 2>&1; then
       # All good, no need to send other alerts
       output_message " System upgrade done!"
-      # Clean-up
-      rm -f ${tmp_file2}
     else
       output_message "Error in upgrading packages..."
       echo "Error in the apt -y dist-upgrade command, check ${tmp_file2}" | rainbow-notifytelegram
@@ -120,38 +114,45 @@ upgrade_on_debian() {
     output_message "No packages to upgrade"
     echo "No packages to upgrade" | rainbow-notifytelegram
   fi
-
-  rm -f ${tmp_file1}
 }
 
 # Upgrade system packages on Debian-like systems, using aptitude
 upgrade_on_debian_via_aptitude() {
-  local tmp_file1=$(mktemp)
-  aptitude update
-  aptitude search '~U' -F "%p" > ${tmp_file1} 2>&1
+  if ! hash aptitude 2>/dev/null; then
+    output_message "aptitude command not found"
+    exit 2
+  fi
+
+  local tmp_file1
+  tmp_file1=$(mktemp)
+  trap 'rm -f "${tmp_file1}"' EXIT
+
+  aptitude update || true
+  aptitude search '~U' -F "%p" > "${tmp_file1}" 2>&1 || true
 
   # If there are packages to update
   if [ -s "${tmp_file1}" ]; then
     output_message "Notify about packages to upgrade..."
-    local tmp_file2=$(mktemp)
-    echo "Packages to update" > ${tmp_file2}
-    cat ${tmp_file1} >> ${tmp_file2}
+    local tmp_file2
+    tmp_file2=$(mktemp)
+    trap 'rm -f "${tmp_file1}" "${tmp_file2}"' EXIT
+
+    echo "Packages to update" > "${tmp_file2}"
+    cat "${tmp_file1}" >> "${tmp_file2}"
     # forge the message and send it
-    cat ${tmp_file2} | rainbow-notifyadmin
-    cat ${tmp_file2} | rainbow-notifytelegram
-    rm -f ${tmp_file2}
+    cat "${tmp_file2}" | rainbow-notifytelegram
+    
     upgrade_packages_on_debian_via_aptitude
   else
     output_message "No packages to upgrade"
   fi
-
-  rm -f ${tmp_file1}
 }
 
 # Check what are the packages in the system to update
 check_packages() {
   # Expand some strings, in particular $NAME, to get the OS name
-  local os_name="$( . /etc/os-release && printf '%s\n' "$NAME" )"
+  local os_name
+  os_name="$( . /etc/os-release && printf '%s\n' "$NAME" )"
 
   case "${os_name}" in 
   *Alpine*)
@@ -166,12 +167,13 @@ check_packages() {
 # Upgrade via aptitude command
 upgrade_packages_on_debian_via_aptitude() {
   output_message "Upgrading packages..."
-  local tmp_file=$(mktemp)
-  echo "Upgrading the system" > ${tmp_file}
-  aptitude -y full-upgrade -q=2 >> ${tmp_file} 2>&1
-  cat ${tmp_file} | rainbow-notifyadmin
-  cat ${tmp_file} | rainbow-notifytelegram
-  rm -f ${tmp_file}
+  local tmp_file
+  tmp_file=$(mktemp)
+  trap 'rm -f "${tmp_file}"' EXIT
+
+  echo "Upgrading the system" > "${tmp_file}"
+  aptitude -y full-upgrade -q=2 >> "${tmp_file}" 2>&1 || true
+  cat "${tmp_file}" | rainbow-notifytelegram
   output_message " System upgrade done!"
 }
 

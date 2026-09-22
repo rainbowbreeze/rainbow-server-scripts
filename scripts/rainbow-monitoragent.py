@@ -7,7 +7,7 @@
 #
 # Part of the RainbowScripts suite
 
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import time
 import datetime
 import json
@@ -23,8 +23,11 @@ class MyServer(BaseHTTPRequestHandler):
         # Read the cpu temperature
         _cpu_temperature = 0
         if os.path.isfile("/sys/class/thermal/thermal_zone0/temp"):
-            with open(r"/sys/class/thermal/thermal_zone0/temp") as File:
-                _cpu_temperature = File.readline()
+            try:
+                with open(r"/sys/class/thermal/thermal_zone0/temp") as File:
+                    _cpu_temperature = File.readline().strip()
+            except Exception as e:
+                print(f"Error reading CPU temp: {e}")
 
         # Read the memory stats
         # free command output
@@ -33,22 +36,39 @@ class MyServer(BaseHTTPRequestHandler):
         # Mem:         990024      176120       36020      173492      777884      579468
         # Swap:             0           0           0
         # --------------------
-        _memory_tot, _memory_used, _memory_free = map(int, os.popen('free -b').readlines()[1].split()[1:4])
+        _memory_tot, _memory_used, _memory_free = 0, 0, 0
+        try:
+            with open("/proc/meminfo") as f:
+                meminfo = {}
+                for line in f:
+                    parts = line.split()
+                    meminfo[parts[0]] = int(parts[1]) * 1024 # Convert kB to bytes
+                
+                _memory_tot = meminfo.get("MemTotal:", 0)
+                _memory_free = meminfo.get("MemAvailable:", meminfo.get("MemFree:", 0))
+                _memory_used = _memory_tot - _memory_free
+        except Exception as e:
+            print(f"Error reading memory info: {e}")
         
         # Read disk stats
         # Example result:
         #  usage(total=12882804736, used=8147230720, free=4735574016)
-        _disk_root_total, _disk_root_used, _disk_root_free = shutil.disk_usage('/')
+        _disk_root_total, _disk_root_used, _disk_root_free = 0, 0, 0
+        try:
+            _disk_root_total, _disk_root_used, _disk_root_free = shutil.disk_usage('/')
+        except Exception as e:
+            print(f"Error reading root disk usage: {e}")
+
+        _disk_data_total, _disk_data_used, _disk_data_free = 0, 0, 0
         if os.path.isdir('/mnt/app-data'):
-          _disk_data_total, _disk_data_used, _disk_data_free = shutil.disk_usage('/mnt/app-data')
-        else:
-          _disk_data_total = 0
-          _disk_data_used = 0
-          _disk_data_free = 0
+            try:
+                _disk_data_total, _disk_data_used, _disk_data_free = shutil.disk_usage('/mnt/app-data')
+            except Exception as e:
+                print(f"Error reading data disk usage: {e}")
 
         # Creates the final signal object
         _signals = {
-            "cpu_temperature": int(_cpu_temperature) / 1000,
+            "cpu_temperature": int(_cpu_temperature) / 1000 if _cpu_temperature else 0,
             "ram_total": int(_memory_tot),
             "ram_free": int(_memory_free),
             "ram_used": int(_memory_used),
@@ -69,7 +89,7 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes(_signals_str, "utf-8"))
 
 if __name__ == "__main__":        
-    webServer = HTTPServer((hostName, serverPort), MyServer)
+    webServer = ThreadingHTTPServer((hostName, serverPort), MyServer)
     print("Server started http://%s:%s" % (hostName, serverPort))
 
     try:

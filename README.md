@@ -3,7 +3,6 @@
 Various scripts to manage my Linux homelab servers.
 - rainbow-backupnas: Perform a simple backup of the system via rsync
 - rainbow-checkhosts: Check if a list of hosts are up'nd running
-- rainbow-notifyadmin: Send a message via a specialized bot
 - rainbow-monitoragent: Start a services that returns core system vitals if queried
 - rainbow-notifytelegram: Send a message via Telegram
 - rainbow-sshloginnotify: Notify for an SSH login

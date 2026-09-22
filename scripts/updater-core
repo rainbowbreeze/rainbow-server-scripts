@@ -10,9 +10,11 @@
 #
 # Part of the RainbowScripts suite
 
+set -euo pipefail
+
 # Check for root execution
 check_for_root() {
-  if [ $EUID -ne 0 ]; then
+  if [ "$EUID" -ne 0 ]; then
     output_message "This script must be run as root" 
     exit 1
   fi
@@ -21,7 +23,7 @@ check_for_root() {
 
 # Show a message
 output_message() {
-  echo ${1}
+  echo "${1}"
 }
 
 # Copy a file to a particular location
@@ -70,12 +72,14 @@ copy_service_file() {
 # Update RainbowScripts
 update_scripts() {
   # Get the script path
-  local base_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
+  local base_dir
+  base_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )"
   #Get the parent folder
-  local base_dir="$(dirname "${base_dir}")"
+  base_dir="$(dirname "${base_dir}")"
 
   # Expand some strings, in particular $NAME, to get the OS name
-  local os_name="$( . /etc/os-release && printf '%s\n' "$NAME" )"
+  local os_name
+  os_name="$( . /etc/os-release && printf '%s\n' "$NAME" )"
 
   # Copy the files where they need to be copied
   output_message "Installing / Updating RainbowScripts on ${os_name}..."
@@ -85,33 +89,24 @@ update_scripts() {
   #   /usr/local/sbin is for system management programs (not normally used by ordinary users)
   local bin_dir="/usr/local/bin/"
 
-  # Remove old .sh files, a legacy from the past
-  # outputmessage "Removing old files"
-  # [ -f "${bin_dir}rainbow-notifyadmin.sh" ] &&  rm "${bin_dir}rainbow-notifyadmin.sh"
-  # [ -f "${bin_dir}rainbow-updater.sh" ] &&  rm "${bin_dir}rainbow-updater.sh"
-  # [ -f "${bin_dir}rainbow-upgradesystem.sh" ] &&  rm "${bin_dir}rainbow-upgradesystem.sh"
-  # [ -f "${bin_dir}rainbow-backupnas.sh" ] &&  rm "${bin_dir}rainbow-backupnas.sh"
-  # [ -f "${bin_dir}rainbow-sshloginnotify.sh" ] &&  rm "${bin_dir}rainbow-sshloginnotify.sh"
-
   case "${os_name}" in 
   *Alpine*)
     output_message "Stopping openrc services"
-    rc-service rainbow-monitoragent stop
-    rc-update del rainbow-monitoragent
+    rc-service rainbow-monitoragent stop || true
+    rc-update del rainbow-monitoragent || true
     ;;
   *)
     output_message "Stopping systemd services"
-    systemctl stop rainbow-monitoragent.service
-    systemctl disable rainbow-monitoragent.service
+    systemctl stop rainbow-monitoragent.service || true
+    systemctl disable rainbow-monitoragent.service || true
     ;;
   esac
 
-  cd ${base_dir}
+  cd "${base_dir}"
 
   # Copy scripts
   copy_exec_file "scripts/rainbow-backupnas" "${bin_dir}"
   copy_exec_file "scripts/rainbow-checkhosts" "${bin_dir}"
-  copy_exec_file "scripts/rainbow-notifyadmin" "${bin_dir}"
   copy_exec_file "scripts/rainbow-notifytelegram" "${bin_dir}"
   copy_exec_file "scripts/rainbow-updater" "${bin_dir}"
   copy_exec_file "scripts/rainbow-upgradesystem" "${bin_dir}"
@@ -119,12 +114,13 @@ update_scripts() {
   copy_file "scripts/rainbow-monitoragent.py" "${bin_dir}"
    
   # Copy daily cron jobs
+  local cron_daily_dir
   if [ -d "/etc/cron.daily" ]; then
     # Debian / Ubuntu
-    local cron_daily_dir="/etc/cron.daily/"
+    cron_daily_dir="/etc/cron.daily/"
   else
     # Alpine
-    local cron_daily_dir="/etc/periodic/daily/"
+    cron_daily_dir="/etc/periodic/daily/"
   fi
   copy_exec_file "scripts/cron/rainbow-cron-packages" "${cron_daily_dir}"
   copy_exec_file "scripts/cron/rainbow-cron-updater" "${cron_daily_dir}"
@@ -154,14 +150,19 @@ update_scripts() {
   local config_folder="/etc/rainbowscripts"
   if [ ! -d "${config_folder}" ]; then
     output_message "Creating config folder"
-    mkdir "${config_folder}"
+    mkdir -p "${config_folder}"
+  fi
+
+  # Copy the version file
+  if [ -f "version.txt" ]; then
+    copy_file "version.txt" "${config_folder}/version.txt"
   fi
 
   # Copy configuration files if they don't already exist
-  for config_source_file in "notifyadmin.conf" "notifytelegram.conf" "backupnas.conf" "backupnas-include.conf" "checkhosts.conf"
+  for config_source_file in "notifytelegram.conf" "backupnas.conf" "backupnas-include.conf" "checkhosts.conf"
   do
     local config_dest_file="${config_folder}/${config_source_file}"
-    if [ ! -f ${config_dest_file} ]; then
+    if [ ! -f "${config_dest_file}" ]; then
       copy_config_file "scripts/conf/${config_source_file}" "${config_dest_file}"
       output_message " --> Before running the scripts, please edit config on ${config_dest_file}, adding your values <--" 
     fi
@@ -186,11 +187,10 @@ update_scripts() {
     ;;
   esac
 
-  cd - > /dev/null 2>&1
+  cd - > /dev/null 2>&1 || true
   output_message "RainbowScripts updated to the latest version"
 }
 
 # Check if the command was launched using root permissions
 check_for_root
 update_scripts
-

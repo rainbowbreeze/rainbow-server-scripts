@@ -30,23 +30,27 @@
 #
 # Part of the RainbowScripts suite
 
+set -euo pipefail
 
-#if [ ${PAM_TYPE} = "open_session" ]; then
-#  message="$PAM_SERVICE login at $PAM_USER@$PAM_RHOST"
-#  rainbow-notifyadmin "${message}" > /dev/null 2>&1
-#fi
 
-if [ ${PAM_TYPE} = "open_session" ]; then
-  date_exec="$(date "+%d %b %Y %H:%M")" #Collect date & time.
+if [ "${PAM_TYPE:-}" = "open_session" ]; then
+  if ! hash curl 2>/dev/null || ! hash jq 2>/dev/null; then
+    exit 0
+  fi
 
-  #Check what could be done querying ipinfo.io
-  tmp_file="$(mktemp)" #Create a temporary file to keep data in. # True temporary file
-  curl https://ipinfo.io/$PAM_RHOST -s -o $tmp_file #Get info on client IP.
-  IP_INFOS="$(jq -r '.org + " - " + .city + ", " + .region + ", " + .country' "$tmp_file")" #Client IP info parsing via jq
+  # Run asynchronously to avoid blocking the login
+  (
+    date_exec="$(date "+%d %b %Y %H:%M")" #Collect date & time.
 
-  message="$PAM_USER@$PAM_RHOST login to $PAM_SERVICE at $date_exec - Other info: $IP_INFOS"
-  rm $TMPFILE #clean up after
+    #Check what could be done querying ipinfo.io
+    tmp_file="$(mktemp)" #Create a temporary file to keep data in. # True temporary file
+    trap 'rm -f "$tmp_file"' EXIT
 
-  rainbow-notifytelegram "${message}" > /dev/null 2>&1
+    curl "https://ipinfo.io/${PAM_RHOST:-}" -s -o "$tmp_file" #Get info on client IP.
+    IP_INFOS="$(jq -r '.org + " - " + .city + ", " + .region + ", " + .country' "$tmp_file")" #Client IP info parsing via jq
+
+    message="${PAM_USER:-unknown}@${PAM_RHOST:-unknown} login to ${PAM_SERVICE:-unknown} at $date_exec - Other info: $IP_INFOS"
+
+    rainbow-notifytelegram "${message}" > /dev/null 2>&1 || true
+  ) & disown
 fi
-

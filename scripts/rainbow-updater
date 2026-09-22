@@ -8,18 +8,19 @@
 #
 # Part of the RainbowScripts suite
 
+set -euo pipefail
 
-# TOOD
+# TODO
 # Check for missing packages: https://github.com/billw2/rpi-clone/blob/master/rpi-clone
 
 # Common vars
 git_repo="https://github.com/rainbowbreeze/rainbow-server-scripts.git/"
-# Current version of the scripts installed on this host
-# current_version="/var/log/rainbow-script-version.txt"
+raw_version_url="https://raw.githubusercontent.com/rainbowbreeze/rainbow-server-scripts/main/version.txt"
+local_version_file="/etc/rainbowscripts/version.txt"
 
 # Check for root execution
 check_for_root() {
-  if [ $EUID -ne 0 ]; then
+  if [ "$EUID" -ne 0 ]; then
     output_message "This script must be run as root" 
     exit 1
   fi
@@ -27,34 +28,67 @@ check_for_root() {
 
 # Show a message
 output_message() {
-  echo ${1}
+  echo "${1}"
+}
+
+check_for_updates() {
+  if ! hash curl 2>/dev/null; then
+    output_message "curl command not found, skipping version check"
+    return 0
+  fi
+
+  output_message "Checking for updates..."
+  local remote_version
+  if ! remote_version=$(curl -sSf "${raw_version_url}"); then
+    output_message "Could not fetch remote version. Proceeding with update anyway."
+    return 0
+  fi
+  # trim whitespace/newlines just in case
+  remote_version=$(echo "${remote_version}" | tr -d '[:space:]')
+
+  local local_version="0.0.0"
+  if [ -f "${local_version_file}" ]; then
+    local_version=$(cat "${local_version_file}")
+    local_version=$(echo "${local_version}" | tr -d '[:space:]')
+  fi
+
+  if [ "${remote_version}" = "${local_version}" ]; then
+    output_message "RainbowScripts is already at the latest version (${local_version}). No update needed."
+    exit 0
+  fi
+
+  output_message "New version found: ${remote_version} (Current: ${local_version})"
 }
 
 # Update RainbowScripts
-download_repo_and_lauch_update() {
+download_repo_and_launch_update() {
+  if ! hash git 2>/dev/null; then
+    output_message "git command not found"
+    exit 2
+  fi
+
   # Creates the temp directort
-  local tmp_dir=$(mktemp -d -t ci-$(date +%Y-%m-%d-%H-%M-%S)-XXXXXXXXXX)
+  local tmp_dir
+  tmp_dir=$(mktemp -d -t ci-$(date +%Y-%m-%d-%H-%M-%S)-XXXXXXXXXX)
+  trap 'rm -rf "${tmp_dir}"' EXIT
   
   # First, create the folder with all the scripts
   output_message "Downloading RainbowScripts..."
   local script_dir="${tmp_dir}/repo"
-  git clone -quite ${git_repo} ${script_dir} >/dev/null 2>&1
+  git clone --depth=1 --quiet "${git_repo}" "${script_dir}" >/dev/null 2>&1 || true
   
   # Check if the download failed
-  # TODO more robust check, based on the output of git
-  if [ ! -d ${script_dir} ]; then
+  if [ ! -d "${script_dir}" ]; then
     output_message "Error while cloning git repo at ${git_repo}. Update aborted."
     exit 1
   fi
 
   # Launch the update
-  ${script_dir}/scripts/updater-core ${script_dir}
-
-  # Removing temp dir
-  rm -rf "${tmp_dir}"
+  "${script_dir}/scripts/updater-core" "${script_dir}"
 }
 
 
 # Check if the command was launched using root permissions
 check_for_root
-download_repo_and_lauch_update
+check_for_updates
+download_repo_and_launch_update

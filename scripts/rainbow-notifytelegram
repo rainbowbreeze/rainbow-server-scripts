@@ -10,17 +10,18 @@
 #
 # Part of the RainbowScripts suite
 
+set -euo pipefail
 
 # Show a message
 output_message() {
-  echo ${1}
+  echo "${1}"
 }
 
 # Set a variable if not already set
 variable_set() {
   local variable="${1}"
   local value="${2}"
-  if [ -z "${!variable}" ]; then
+  if [ -z "${!variable:-}" ]; then
     eval "${variable}=\"${value}\""
   fi
 }
@@ -34,18 +35,18 @@ variables_set_defaults() {
 load_config_from_file() {
   local config_found=0
 
-  if [ -f ${config_file} ]; then
-  	. ${config_file}
+  if [ -f "${config_file}" ]; then
+  	. "${config_file}"
 	  config_found=1
   fi
 
   # Workaroud for local execution of the script
   if [ -f ./conf/debug-rainbowscripts.conf ]; then
-    . debug-rainbowscripts.conf
+    . ./conf/debug-rainbowscripts.conf
 	  config_found=1
   fi
 
-  if [ ${config_found} -eq 0 ]; then
+  if [ "${config_found}" -eq 0 ]; then
     output_message "Config file not found. Default file is ${config_file}"
 	  exit 1
   fi
@@ -53,17 +54,17 @@ load_config_from_file() {
 
 
 check_for_required_vars () {
-  if [ -z "${bot_token}" ]; then
+  if [ -z "${bot_token:-}" ]; then
     output_message "Bot token not found. Please check config file at ${config_file}"
     exit 2
   fi
 
-  if [ -z "${chat_id}" ]; then
+  if [ -z "${chat_id:-}" ]; then
     output_message "chat_id not found. Please check config file at ${config_file}"
     exit 2
   fi
 
-  if [ -z "${message}" ]; then
+  if [ -z "${message:-}" ]; then
     output_message "message not found. Please specify it as the first command line argument"
     exit 2
   fi
@@ -74,16 +75,18 @@ variables_set_defaults
 load_config_from_file
 
 # Check for the esistence of a command line argument
-if [ -z "$1" ]; then
+if [ -z "${1:-}" ]; then
   # read from STDIN, and the text can be piped
   # echo "Message to send" | thisscript
 
   # Read the first line
-  read -r message
-  # then read the others, attaching a \n only from the second ongoing
-  while read -r line; do
-    message="${message}\n${line}"
-  done
+  if read -r message_line; then
+    message="${message_line}"
+    # then read the others, attaching a \n only from the second ongoing
+    while read -r line; do
+      message="${message}\n${line}"
+    done
+  fi
 else
   #read the first commmand line argument
   variable_set "message" "$1"
@@ -91,10 +94,19 @@ fi
 
 check_for_required_vars
 
-curl -s --data "text=${message}" --data "chat_id=${chat_id}" 'https://api.telegram.org/bot'${bot_token}'/sendMessage' > /dev/null 2>&1
+if ! hash curl 2>/dev/null; then
+  output_message "curl command not found"
+  exit 3
+fi
+
+if ! hash wget 2>/dev/null; then
+  output_message "wget command not found"
+  exit 3
+fi
+
+curl -s --data "text=${message}" --data "chat_id=${chat_id}" "https://api.telegram.org/bot${bot_token}/sendMessage" > /dev/null 2>&1 || true
 
 # Temp workaround
 #message=`wget -O - https://www.myip.com/ -q | grep globe_network.png`
-message="IP: `wget -O - https://ipinfo.io/ip -q`"
-curl -s --data "text=${message}" --data "chat_id=${chat_id}" 'https://api.telegram.org/bot'${bot_token}'/sendMessage' > /dev/null 2>&1
-
+message="IP: $(wget -O - https://ipinfo.io/ip -q || echo "unknown")"
+curl -s --data "text=${message}" --data "chat_id=${chat_id}" "https://api.telegram.org/bot${bot_token}/sendMessage" > /dev/null 2>&1 || true
