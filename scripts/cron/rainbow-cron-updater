@@ -15,4 +15,4 @@
 # the path so they can be reacheable within the caller script.
 export PATH="/usr/local/bin:$PATH"
 
-/usr/loca/bin/rainbow-updater
+/usr/local/bin/rainbow-updater
