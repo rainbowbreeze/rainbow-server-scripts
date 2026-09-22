@@ -15,7 +15,7 @@ set -euo pipefail
 
 # Common vars
 git_repo="https://github.com/rainbowbreeze/rainbow-server-scripts.git/"
-raw_version_url="https://raw.githubusercontent.com/rainbowbreeze/rainbow-server-scripts/main/version.txt"
+raw_version_url="https://raw.githubusercontent.com/rainbowbreeze/rainbow-server-scripts/refs/heads/master/version.txt"
 local_version_file="/etc/rainbowscripts/version.txt"
 
 # Check for root execution
