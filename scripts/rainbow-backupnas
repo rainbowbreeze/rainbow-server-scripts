@@ -70,7 +70,7 @@ execute_backup() {
 
   local rsync_out
   rsync_out=$(mktemp)
-  trap 'rm -f "${rsync_out}"' EXIT
+  trap "rm -f \"${rsync_out}\"" EXIT
 
   local rsync_exit=0
   rsync -arv --delete -e "ssh -i ${nas_ssh_key_file}" --files-from="${include_file}" / "${nas_address_and_path}" > "${rsync_out}" 2>&1 || rsync_exit=$?

@@ -70,7 +70,7 @@ download_repo_and_launch_update() {
   # Creates the temp directort
   local tmp_dir
   tmp_dir=$(mktemp -d -t ci-$(date +%Y-%m-%d-%H-%M-%S)-XXXXXXXXXX)
-  trap 'rm -rf "${tmp_dir}"' EXIT
+  trap "rm -rf \"${tmp_dir}\"" EXIT
   
   # First, create the folder with all the scripts
   output_message "Downloading RainbowScripts..."

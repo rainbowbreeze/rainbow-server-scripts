@@ -35,7 +35,7 @@ upgrade_on_alpine() {
   tmp_apk_full_output=$(mktemp)
   local tmp_file1
   tmp_file1=$(mktemp)
-  trap 'rm -f "${tmp_apk_full_output}" "${tmp_file1}"' EXIT
+  trap "rm -f \"${tmp_apk_full_output}\" \"${tmp_file1}\"" EXIT
 
   # Capture the whole command output
   local apk_exit_code=0
@@ -51,7 +51,7 @@ upgrade_on_alpine() {
       output_message "Notify about packages to upgrade..."
       local tmp_file2
       tmp_file2=$(mktemp)
-      trap 'rm -f "${tmp_apk_full_output}" "${tmp_file1}" "${tmp_file2}"' EXIT
+      trap "rm -f \"${tmp_apk_full_output}\" \"${tmp_file1}\" \"${tmp_file2}\"" EXIT
       
       echo "Packages to upgrade:" > "${tmp_file2}"
       cat "${tmp_file1}" >> "${tmp_file2}"
@@ -169,7 +169,7 @@ upgrade_packages_on_debian_via_aptitude() {
   output_message "Upgrading packages..."
   local tmp_file
   tmp_file=$(mktemp)
-  trap 'rm -f "${tmp_file}"' EXIT
+  trap "rm -f \"${tmp_file}\"" EXIT
 
   echo "Upgrading the system" > "${tmp_file}"
   aptitude -y full-upgrade -q=2 >> "${tmp_file}" 2>&1 || true
